@@ -20,7 +20,8 @@ class ShaderProgram{
         void check_error();
         int status;
     public:
-        ShaderProgram(Shader vertex_shader, Shader fragment_shader);
+        ShaderProgram(const Shader vertex_shader, const Shader fragment_shader);
+        ShaderProgram(const std::string &vertex_shader_path, const std::string &fragment_shader_path);
         ~ShaderProgram();
         void bind();
         void rebind();

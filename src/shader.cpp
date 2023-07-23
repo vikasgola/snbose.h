@@ -52,6 +52,14 @@ ShaderProgram::ShaderProgram(Shader vertex_shader, Shader fragment_shader){
     glAttachShader(this->id, fragment_shader.id);
 }
 
+ShaderProgram::ShaderProgram(const std::string &vertex_shader_path, const std::string &fragment_shader_path){
+    Shader vertex_shader(GL_VERTEX_SHADER, "shaders/basic.vs");
+    Shader fragment_shader(GL_FRAGMENT_SHADER, "shaders/basic.fs");
+    this->id = glCreateProgram();
+    glAttachShader(this->id, vertex_shader.id);
+    glAttachShader(this->id, fragment_shader.id);
+}
+
 ShaderProgram::~ShaderProgram(){
     glDeleteProgram(this->id);
 }
