@@ -2,8 +2,8 @@
 
 #include "texture.h"
 #include "stb_image.h"
-#include "helper.h"
 #include<iostream>
+#include<GL/glew.h>
 
 Texture::Texture(const std::string& file_path){
     glEnable(GL_TEXTURE_2D);
