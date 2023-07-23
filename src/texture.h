@@ -14,7 +14,7 @@ class Texture{
         Texture(const std::string& file_path);
         ~Texture();
         void bind();
-        void rebind();
+        void load();
         void unbind();
         inline const unsigned int get_index(){return this->index;}
 };

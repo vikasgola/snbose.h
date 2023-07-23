@@ -13,6 +13,7 @@ Texture::Texture(const std::string& file_path){
         std::cerr<<"ERROR: failed to load file "<<file_path<<std::endl;
     }
     this->index = this->used_index++;
+    this->load();
 }
 
 Texture::~Texture(){
@@ -20,7 +21,7 @@ Texture::~Texture(){
     glDeleteTextures(1, &this->id);
 }
 
-void Texture::bind(){
+void Texture::load(){
     glBindTexture(GL_TEXTURE_2D, this->id);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
@@ -28,9 +29,10 @@ void Texture::bind(){
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, this->width, this->height, 0, GL_RGB, GL_UNSIGNED_BYTE, this->data);
     glGenerateMipmap(GL_TEXTURE_2D);
+    this->unbind();
 }
 
-void Texture::rebind(){
+void Texture::bind(){
     glActiveTexture(GL_TEXTURE0 + this->index);
     glBindTexture(GL_TEXTURE_2D, this->id);
 }
