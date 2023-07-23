@@ -49,7 +49,12 @@ int main(void){
     }
     // std::cout<<glGetString(GL_VERSION)<<std::endl;
 
-    float positions[] = {
+
+    // creating shaders
+    ShaderProgram shader_program("shaders/basic.vs", "shaders/basic.fs");
+    Texture texture("assets/container.jpg");
+
+    const float positions[] = {
         -0.5, -0.5, 0.0, 0.0,
          0.5, -0.5, 1.0, 0.0,
         -0.5,  0.5, 0.0, 1.0,
@@ -65,13 +70,6 @@ int main(void){
     VertexArrayBuffer<float> vertex_array_buffer;
     VertexBuffer<float> vertex_buffer(positions, 4, 4);
     IndexBuffer index_buffer(indices, 6);
-    Texture texture("assets/container.jpg");
-
-    // read and create shaders
-    Shader vertex_shader(GL_VERTEX_SHADER, "shaders/basic.vs");
-    Shader fragment_shader(GL_FRAGMENT_SHADER, "shaders/basic.fs");
-    ShaderProgram shader_program(vertex_shader, fragment_shader);
-
 
     // bind vbo and ibo to vao
     vertex_array_buffer.bind(vertex_buffer);
@@ -79,12 +77,9 @@ int main(void){
     // enable first vertex attrib array with positions
     vertex_array_buffer.push(2);
     vertex_array_buffer.push(2);
-    shader_program.bind();
-    texture.bind();
 
     // unbind everthing
     vertex_array_buffer.unbind();
-    texture.unbind();
     shader_program.unbind();
 
     int r = 0, g = 0, b = 0;
@@ -110,10 +105,10 @@ int main(void){
         trs = glm::rotate(trs, time, glm::vec3(0.0, 0.0, 1.0));
         trs = glm::scale(trs, glm::vec3(si, si, 1.0));
 
-        texture.rebind();
+        texture.bind();
         vertex_array_buffer.rebind();
 
-        shader_program.rebind();
+        shader_program.bind();
         // shader_program.set_uniform4f("u_color", r/256.0, g/256.0, b/256.0, 1.0);
         shader_program.set_uniform4f("u_color", 1.0, 1.0, 1.0, 1.0);
         shader_program.set_uniform1i("texture1", texture.get_index());

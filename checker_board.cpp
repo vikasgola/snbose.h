@@ -89,9 +89,7 @@ int main(void){
     vector<unsigned int> indices2(32*3*2);
     create_board(board_vertices, indices1, indices2);
 
-    Shader vs(GL_VERTEX_SHADER, "shaders/checker_board.vs");
-    Shader fs(GL_FRAGMENT_SHADER, "shaders/checker_board.fs");
-    ShaderProgram sp(vs, fs);
+    ShaderProgram sp("shaders/checker_board.vs", "shaders/checker_board.fs");
 
     VertexArrayBuffer<float> vao;
     VertexBuffer<float> vbo(&board_vertices[0], 9*9, 3);
