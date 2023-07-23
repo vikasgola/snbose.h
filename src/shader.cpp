@@ -96,3 +96,9 @@ void ShaderProgram::set_uniform1i(const std::string& name, const unsigned int te
     // check for error in location
     glUniform1i(location, texture_id);
 }
+
+void ShaderProgram::set_uniformm4f(const std::string& name, const float *mat){
+    int location = glGetUniformLocation(this->id, name.c_str());
+    // check for error in location
+    glUniformMatrix4fv(location, 1, GL_FALSE, mat);
+}

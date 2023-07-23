@@ -7,6 +7,8 @@
 
 #include<GL/glew.h>
 #include<GLFW/glfw3.h>
+#include<glm/glm.hpp>
+#include<glm/gtc/type_ptr.hpp>
 
 #include<iostream>
 #include<random>
@@ -90,18 +92,32 @@ int main(void){
     // main event loop and draw whatever we want to draw
     while(!glfwWindowShouldClose(window)){
         glClearColor(0.05, 0.05, 0.05, 1.0);
-        // glClear(GL_COLOR_BUFFER_BIT);
+        glClear(GL_COLOR_BUFFER_BIT);
         r = (r+rt)%256;
         g = (g+gt)%256;
         b = (b+bt)%256;
 
+        float time = (float)glfwGetTime();
+        float si = fabsf(sinf(time));
+        // trs
+        // i.e. scale, translate, and, rotation
+        glm::mat4 trs(1.0);
+        trs = glm::translate(trs, glm::vec3(
+            sinf(time)*cosf(time),
+            cosf(time)*sinf(time),
+            0.0)
+        );
+        trs = glm::rotate(trs, time, glm::vec3(0.0, 0.0, 1.0));
+        trs = glm::scale(trs, glm::vec3(si, si, 1.0));
+
         texture.rebind();
-        // bind vao
         vertex_array_buffer.rebind();
-        // set value to uniform variable
+
         shader_program.rebind();
-        shader_program.set_uniform4f("u_color", r/256.0, g/256.0, b/256.0, 1.0);
+        // shader_program.set_uniform4f("u_color", r/256.0, g/256.0, b/256.0, 1.0);
+        shader_program.set_uniform4f("u_color", 1.0, 1.0, 1.0, 1.0);
         shader_program.set_uniform1i("texture1", texture.get_index());
+        shader_program.set_uniformm4f("u_trs", glm::value_ptr(trs));
 
         // draw
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
