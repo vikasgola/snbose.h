@@ -3,7 +3,6 @@
 #include "src/vertex_buffer.h"
 #include "src/index_buffer.h"
 #include "src/vertex_array_buffer.h"
-#include "src/texture.h"
 
 #include<GL/glew.h>
 #include<GLFW/glfw3.h>
@@ -92,7 +91,7 @@ int main(void){
     ShaderProgram sp("shaders/checker_board.vs", "shaders/checker_board.fs");
 
     VertexArrayBuffer<float> vao;
-    VertexBuffer<float> vbo(&board_vertices[0], 9*9, 3);
+    VertexBuffer<float> vbo(&board_vertices[0], 3, 9*9);
     IndexBuffer ibo1(&indices1[0], 32*3*2);
     IndexBuffer ibo2(&indices2[0], 32*3*2);
 

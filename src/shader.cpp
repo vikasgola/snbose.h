@@ -46,15 +46,15 @@ void Shader::compile(const std::string& source){
     this->check_error();
 }
 
-ShaderProgram::ShaderProgram(Shader vertex_shader, Shader fragment_shader){
+ShaderProgram::ShaderProgram(const Shader vertex_shader, const Shader fragment_shader){
     this->id = glCreateProgram();
     glAttachShader(this->id, vertex_shader.id);
     glAttachShader(this->id, fragment_shader.id);
 }
 
 ShaderProgram::ShaderProgram(const std::string &vertex_shader_path, const std::string &fragment_shader_path){
-    Shader vertex_shader(GL_VERTEX_SHADER, "shaders/basic.vs");
-    Shader fragment_shader(GL_FRAGMENT_SHADER, "shaders/basic.fs");
+    Shader vertex_shader(GL_VERTEX_SHADER, vertex_shader_path);
+    Shader fragment_shader(GL_FRAGMENT_SHADER, fragment_shader_path);
     this->id = glCreateProgram();
     glAttachShader(this->id, vertex_shader.id);
     glAttachShader(this->id, fragment_shader.id);

@@ -3,7 +3,7 @@
 
 template <typename T>
 VertexBuffer<T>::VertexBuffer(
-    const T *data, const unsigned int vertices_count, const unsigned int vertex_size
+    const T *data, const unsigned int vertex_size, const unsigned int vertices_count
 ): data(data), vertices_count(vertices_count), vertex_size(vertex_size){
     glGenBuffers(1, &this->id);
 }

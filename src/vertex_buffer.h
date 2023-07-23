@@ -8,7 +8,7 @@ class VertexBuffer{
         const unsigned int vertices_count;
         const unsigned int vertex_size;
     public:
-        VertexBuffer(const T *data, const unsigned int vertices_count, const unsigned int vertex_size);
+        VertexBuffer(const T *data, const unsigned int vertex_size, const unsigned int vertices_count);
         ~VertexBuffer();
         void bind();
         void unbind();
