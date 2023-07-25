@@ -57,12 +57,12 @@ int main(void){
 
     const float vertices[] = {
         // p coordinates | t coordinates
-        -0.5, -0.5,    0.0, 0.0,
-         0.5, -0.5,    1.0, 0.0,
-        -0.5,  0.5,    0.0, 1.0,
-         0.5,  0.5,    1.0, 1.0,
+        -0.5, -0.5, 0.0,    0.0, 0.0,
+         0.5, -0.5, 0.0,    1.0, 0.0,
+        -0.5,  0.5, 0.0,    0.0, 1.0,
+         0.5,  0.5, 0.0,    1.0, 1.0,
     };
-    const unsigned int vertex_layout[] = {2, 2};
+    const unsigned int vertex_layout[] = {3, 2};
     unsigned int indices[] = {
         0, 1, 2,
         1, 2, 3,
