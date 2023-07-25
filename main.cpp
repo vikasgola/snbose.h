@@ -4,6 +4,7 @@
 #include "src/index_buffer.h"
 #include "src/vertex_array_buffer.h"
 #include "src/texture.h"
+#include "src/object.h"
 
 #include<GL/glew.h>
 #include<GLFW/glfw3.h>
@@ -50,71 +51,46 @@ int main(void){
     // std::cout<<glGetString(GL_VERSION)<<std::endl;
 
 
-    // creating shaders
+    // creating shaders and textures
     ShaderProgram shader_program("shaders/basic.vs", "shaders/basic.fs");
     Texture texture("assets/container.jpg");
 
-    const float positions[] = {
-        -0.5, -0.5, 0.0, 0.0,
-         0.5, -0.5, 1.0, 0.0,
-        -0.5,  0.5, 0.0, 1.0,
-         0.5,  0.5, 1.0, 1.0,
+    const float vertices[] = {
+        // p coordinates | t coordinates
+        -0.5, -0.5,    0.0, 0.0,
+         0.5, -0.5,    1.0, 0.0,
+        -0.5,  0.5,    0.0, 1.0,
+         0.5,  0.5,    1.0, 1.0,
     };
-
+    const unsigned int vertex_layout[] = {2, 2};
     unsigned int indices[] = {
         0, 1, 2,
         1, 2, 3,
     };
 
-    // create vertex array buffer which stores pointer to vbo and ibo for easy binding
-    VertexArrayBuffer<float> vertex_array_buffer;
-    VertexBuffer<float> vertex_buffer(positions, 4, 4);
-    IndexBuffer index_buffer(indices, 6);
+    Object<float> wall(vertices, vertex_layout, 2, 4);
+    wall.set_indices(indices, 6);
+    wall.set_texture(texture);
 
-    // bind vbo and ibo to vao
-    vertex_array_buffer.bind(vertex_buffer);
-    vertex_array_buffer.bind(index_buffer);
-    // enable first vertex attrib array with positions
-    vertex_array_buffer.push(2);
-    vertex_array_buffer.push(2);
-
-    // unbind everthing
-    vertex_array_buffer.unbind();
-    shader_program.unbind();
-
-    int r = 0, g = 0, b = 0;
-    int rt = rand()%5, gt = rand()%5, bt = rand()%5;
     // main event loop and draw whatever we want to draw
     while(!glfwWindowShouldClose(window)){
         glClearColor(0.05, 0.05, 0.05, 1.0);
         glClear(GL_COLOR_BUFFER_BIT);
-        r = (r+rt)%256;
-        g = (g+gt)%256;
-        b = (b+bt)%256;
-
         float time = (float)glfwGetTime();
-        float si = fabsf(sinf(time));
-        // trs
-        // i.e. scale, translate, and, rotation
-        glm::mat4 trs(1.0);
-        trs = glm::translate(trs, glm::vec3(
-            sinf(time)*cosf(time),
-            cosf(time)*sinf(time),
-            0.0)
-        );
-        trs = glm::rotate(trs, time, glm::vec3(0.0, 0.0, 1.0));
-        trs = glm::scale(trs, glm::vec3(si, si, 1.0));
+        float si = fabsf(sinf(time)*0.4f);
 
-        texture.bind();
-        vertex_array_buffer.rebind();
+        // animate the wall
+        wall.scale(glm::vec3(si, si, 1.0));
+        wall.rotate(time, glm::vec3(0.0, 0.0, 1.0));
+        wall.move(glm::vec3(sinf(time), cosf(time), 0.0));
 
+        // bind object, texture, and shader
+        wall.bind();
         shader_program.bind();
-        // shader_program.set_uniform4f("u_color", r/256.0, g/256.0, b/256.0, 1.0);
-        shader_program.set_uniform4f("u_color", 1.0, 1.0, 1.0, 1.0);
-        shader_program.set_uniform1i("texture1", texture.get_index());
-        shader_program.set_uniformm4f("u_trs", glm::value_ptr(trs));
 
-        // draw
+        // shader_program.set_uniform4f("u_color", 1.0, 1.0, 1.0, 1.0);
+        shader_program.set_uniform1i("texture1", texture.get_index());
+        shader_program.set_uniformm4f("u_model", glm::value_ptr(wall.get_model_matrix()));
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
 
         glfwSwapBuffers(window);
