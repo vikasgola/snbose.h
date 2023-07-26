@@ -17,7 +17,11 @@
 #define SCREEN_WIDTH 800
 #define SCREEN_HEIGHT 600
 
+void check_inputs(GLFWwindow *window);
+void framebuffer_size_callback(GLFWwindow *window, int width, int height);
+
 int main(void){
+    srand(time(0));
     // initialize the glfw environ
     // helps to create window, independent of os.
     if(glfwInit() != GLFW_TRUE){
@@ -39,6 +43,7 @@ int main(void){
     }
     // set context to new created windows
     glfwMakeContextCurrent(window);
+    glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
 
     // enable vsync. swap buffers when 0 screen update has happened
     // glfwSwapInterval(10);
@@ -72,27 +77,49 @@ int main(void){
     glm::mat4 projection;
     projection = glm::perspective(glm::radians(45.0f), (float)SCREEN_WIDTH/SCREEN_HEIGHT, 0.1f, 100.0f);
 
+    const size_t CUBE_COUNT = 15;
+    glm::vec3 cube_positions[CUBE_COUNT] = {
+        glm::vec3(4.0f*rand()/RAND_MAX - 2.0f, 4.0f*rand()/RAND_MAX - 2.0f, 90.0f + 7.0f*rand()/RAND_MAX),
+        glm::vec3(4.0f*rand()/RAND_MAX - 2.0f, 4.0f*rand()/RAND_MAX - 2.0f, 90.0f + 7.0f*rand()/RAND_MAX),
+        glm::vec3(4.0f*rand()/RAND_MAX - 2.0f, 4.0f*rand()/RAND_MAX - 2.0f, 90.0f + 7.0f*rand()/RAND_MAX),
+        glm::vec3(4.0f*rand()/RAND_MAX - 2.0f, 4.0f*rand()/RAND_MAX - 2.0f, 90.0f + 7.0f*rand()/RAND_MAX),
+        glm::vec3(4.0f*rand()/RAND_MAX - 2.0f, 4.0f*rand()/RAND_MAX - 2.0f, 90.0f + 7.0f*rand()/RAND_MAX),
+
+        glm::vec3(4.0f*rand()/RAND_MAX - 2.0f, 4.0f*rand()/RAND_MAX - 2.0f, 90.0f + 7.0f*rand()/RAND_MAX),
+        glm::vec3(4.0f*rand()/RAND_MAX - 2.0f, 4.0f*rand()/RAND_MAX - 2.0f, 90.0f + 7.0f*rand()/RAND_MAX),
+        glm::vec3(4.0f*rand()/RAND_MAX - 2.0f, 4.0f*rand()/RAND_MAX - 2.0f, 90.0f + 7.0f*rand()/RAND_MAX),
+        glm::vec3(4.0f*rand()/RAND_MAX - 2.0f, 4.0f*rand()/RAND_MAX - 2.0f, 90.0f + 7.0f*rand()/RAND_MAX),
+        glm::vec3(4.0f*rand()/RAND_MAX - 2.0f, 4.0f*rand()/RAND_MAX - 2.0f, 90.0f + 7.0f*rand()/RAND_MAX),
+
+        glm::vec3(4.0f*rand()/RAND_MAX - 2.0f, 4.0f*rand()/RAND_MAX - 2.0f, 90.0f + 7.0f*rand()/RAND_MAX),
+        glm::vec3(4.0f*rand()/RAND_MAX - 2.0f, 4.0f*rand()/RAND_MAX - 2.0f, 90.0f + 7.0f*rand()/RAND_MAX),
+        glm::vec3(4.0f*rand()/RAND_MAX - 2.0f, 4.0f*rand()/RAND_MAX - 2.0f, 90.0f + 7.0f*rand()/RAND_MAX),
+        glm::vec3(4.0f*rand()/RAND_MAX - 2.0f, 4.0f*rand()/RAND_MAX - 2.0f, 90.0f + 7.0f*rand()/RAND_MAX),
+        glm::vec3(4.0f*rand()/RAND_MAX - 2.0f, 4.0f*rand()/RAND_MAX - 2.0f, 90.0f + 7.0f*rand()/RAND_MAX),
+    };
+
     // main event loop and draw whatever we want to draw
     while(!glfwWindowShouldClose(window)){
+        check_inputs(window);
         glClearColor(0.05, 0.05, 0.05, 1.0);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         float time = (float)glfwGetTime();
 
         // bind object, texture, and shader
         box.bind();
-        box.rotate(time, glm::vec3(1.0, 1.0, 1.0));
-        box.move(glm::vec3(
-            sinf(time),
-            cosf(time),
-            100.0f - fabsf(sinf(time)+cosf(time))*30.0f
-        ));
         shader_program.bind();
-
         shader_program.set_uniform1i("texture1", texture.get_index());
-        shader_program.set_uniformm4f("u_model", glm::value_ptr(box.get_model_matrix()));
         shader_program.set_uniformm4f("u_view", glm::value_ptr(view));
         shader_program.set_uniformm4f("u_projection", glm::value_ptr(projection));
-        glDrawArrays(GL_TRIANGLES, 0, 36);
+        for(int i=0;i<CUBE_COUNT;i++){
+            glm::vec3 t(cube_positions[i]);
+            t.z = cube_positions[i].z + 2.0f*sinf(time);
+            box.scale(glm::vec3(0.7));
+            box.rotate(time+i, glm::vec3(1.0, 1.0, 1.0));
+            box.move(t);
+            shader_program.set_uniformm4f("u_model", glm::value_ptr(box.get_model_matrix()));
+            glDrawArrays(GL_TRIANGLES, 0, 36);
+        }
 
         glfwSwapBuffers(window);
         glfwPollEvents();
@@ -100,4 +127,17 @@ int main(void){
 
     glfwTerminate();
     return EXIT_SUCCESS;
+}
+
+// glfw: whenever the window size changed (by OS or user resize) this callback function executes
+void framebuffer_size_callback(GLFWwindow* window, int width, int height){
+    // make sure the viewport matches the new window dimensions; note that width and
+    // height will be significantly larger than specified on retina displays.
+    glViewport(0, 0, width, height);
+}
+
+void check_inputs(GLFWwindow *window){
+    if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS){
+        glfwSetWindowShouldClose(window, true);
+    }
 }
