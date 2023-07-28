@@ -93,16 +93,16 @@ void ShaderProgram::unbind(){
     glUseProgram(GL_NONE);
 }
 
-void ShaderProgram::set_uniform4f(const std::string& name, float a, float b, float c, float d){
+void ShaderProgram::set_uniform4f(const std::string& name, const glm::vec4 &value){
     int location = glGetUniformLocation(this->id, name.c_str());
     // check for error in location
-    glUniform4f(location, a, b, c, d);
+    glUniform4f(location, value.x, value.y, value.z, value.w);
 }
 
-void ShaderProgram::set_uniform1i(const std::string& name, const unsigned int texture_id){
+void ShaderProgram::set_uniform1i(const std::string& name, const unsigned int value){
     int location = glGetUniformLocation(this->id, name.c_str());
     // check for error in location
-    glUniform1i(location, texture_id);
+    glUniform1i(location, value);
 }
 
 void ShaderProgram::set_uniformm4f(const std::string& name, const float *mat){
