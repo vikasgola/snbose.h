@@ -12,7 +12,9 @@ class Renderer{
         float fov;
         float near, far;
         float aspect_ratio;
+        static float draw_time;
     public:
+        float FPS = 0.0f;
         Renderer();
         ~Renderer();
         void set_camera(const glm::vec3 view);

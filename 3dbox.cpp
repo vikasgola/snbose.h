@@ -98,22 +98,17 @@ int main(void){
         check_inputs(window);
         glClearColor(0.05, 0.05, 0.05, 1.0);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        float time = (float)glfwGetTime();
-        frames_drawn++;
-        if(time-lasttime > 1.0){
-            std::cout<<"\rFPS: "<<frames_drawn/(time-lasttime)<<std::flush;
-            lasttime = time;
-            frames_drawn = 0;
-        }
+        if((frames_drawn++)%20 == 0)
+            std::cout<<"\rFPS: "<<renderer.FPS<<std::flush;
 
         for(int i=0;i<CUBE_COUNT;i++){
+            float time = (float)glfwGetTime();
             boxes[i].move(
                 boxes_positions[i] + glm::vec3(0.0f, 0.0f, 2.0f*sinf(time))
             );
             boxes[i].rotate(time+i, glm::vec3(1.0, 1.0, 1.0));
         }
         renderer.draw();
-
         glfwSwapBuffers(window);
         glfwPollEvents();
     }

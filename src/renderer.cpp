@@ -26,6 +26,13 @@ void Renderer::add_object(Object<float> &object, ShaderProgram &shader_program){
 }
 
 void Renderer::draw(){
+    float curr_time = (float)glfwGetTime();
+    if(this->draw_time == -1){
+        this->draw_time = curr_time+1e3;
+    }
+    this->FPS = 1.0/(curr_time-this->draw_time);
+    this->draw_time = curr_time;
+
     for(auto &render_unit: this->objects){
         auto object = render_unit.first;
         auto shader_program = render_unit.second;
@@ -49,3 +56,5 @@ void Renderer::draw(){
         object->unbind();
     }
 }
+
+float Renderer::draw_time = -1;
