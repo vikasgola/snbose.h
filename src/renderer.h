@@ -19,6 +19,7 @@ class Renderer{
         ~Renderer();
         void set_camera(const glm::vec3 view);
         void use_pprojection(float fov, float aspect_ratio, float near, float far);
+        void use_oprojection(float left, float right, float bottom, float top, float near, float far);
         void add_object(Object<float> &object, ShaderProgram &shader_program);
         void draw();
 };

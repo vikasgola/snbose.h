@@ -24,10 +24,11 @@ class ShaderProgram{
         ShaderProgram(const Shader vertex_shader, const Shader fragment_shader);
         ShaderProgram(const std::string &vertex_shader_path, const std::string &fragment_shader_path);
         ~ShaderProgram();
-        void bind();
-        void rebind();
+        void link();
+        void use();
         void unbind();
-        void set_uniform4f(const std::string& name, const glm::vec4 &value);
+        int get_location(const std::string &name);
+        void set_uniform4f(const std::string &name, const glm::vec4 &value);
         void set_uniform1i(const std::string& name, const unsigned int texture_id);
         void set_uniformm4f(const std::string& name, const float *mat);
 

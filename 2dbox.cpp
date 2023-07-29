@@ -49,7 +49,7 @@ int main(void){
 
 
     // creating shaders and textures
-    ShaderProgram shader_program("shaders/basic.vs", "shaders/basic.fs");
+    ShaderProgram shader_program("shaders/advance.vs", "shaders/advance.fs");
     Texture texture("assets/container.jpg");
 
     const float vertices[] = {
@@ -88,16 +88,15 @@ int main(void){
             walls[i].rotate(time+i*10, glm::vec3(0.0, 0.0, 1.0));
             walls[i].move(glm::vec3(sinf(time+i*10), cosf(time+i*10), 0.0));
         }
+        shader_program.use();
 
         // bind object, texture, and shader
         walls[0].bind();
-        shader_program.bind();
         shader_program.set_uniformm4f("u_model", glm::value_ptr(walls[0].get_model_matrix()));
         shader_program.set_uniform1i("u_texture1", texture.get_index());
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
 
         walls[1].bind();
-        shader_program.bind();
         shader_program.set_uniformm4f("u_model", glm::value_ptr(walls[1].get_model_matrix()));
         shader_program.set_uniform1i("u_texture1", texture.get_index());
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);

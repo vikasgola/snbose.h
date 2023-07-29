@@ -98,14 +98,13 @@ int main(void){
 
     vao.bind(vbo);
         vao.push(3);
-        sp.bind();
     vao.unbind();
 
     // main event loop and draw whatever we want to draw
     while(!glfwWindowShouldClose(window)){
         glClearColor(0.05, 0.05, 0.05, 1.0);
         glClear(GL_COLOR_BUFFER_BIT);
-        sp.rebind();
+        sp.use();
 
         vao.bind(ibo1);
         sp.set_uniform4f("a_color", glm::vec4(0.80, 0.80, 0.80, 1.0));

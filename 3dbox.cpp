@@ -60,7 +60,7 @@ int main(void){
 
 
     // creating shaders and textures
-    ShaderProgram shader_program("shaders/basic.vs", "shaders/basic.fs");
+    ShaderProgram shader_program("shaders/advance.vs", "shaders/advance.fs");
     Texture texture("assets/container.jpg");
     Renderer renderer;
 
