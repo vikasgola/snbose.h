@@ -32,8 +32,10 @@ class Object{
         void set_color(const glm::vec4 color);
 
         void scale(const glm::vec3 factor);
+        void scale(const float factor_x, const float factor_y, const float factor_z);
         void rotate(const float angle, const glm::vec3 axis);
         void move(const glm::vec3 pos);
+        void move(const float pos_x, const float pos_y, const float pos_z);
 
         inline glm::vec3 get_position(){return this->translate;}
         inline glm::vec4 get_color() {return this->color;}

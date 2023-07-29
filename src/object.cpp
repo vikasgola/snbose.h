@@ -96,6 +96,11 @@ void Object<T>::scale(const glm::vec3 factor){
 }
 
 template <typename T>
+void Object<T>::scale(const float factor_x, const float factor_y, const float factor_z){
+    this->scale_factor = glm::vec3(factor_x, factor_y, factor_z);
+}
+
+template <typename T>
 void Object<T>::set_color(const glm::vec4 color){
     this->color = color;
 }
@@ -109,6 +114,11 @@ void Object<T>::rotate(const float angle, const glm::vec3 axis){
 template <typename T>
 void Object<T>::move(const glm::vec3 pos){
     this->translate = pos;
+}
+
+template <typename T>
+void Object<T>::move(const float pos_x, const float pos_y, const float pos_z){
+    this->translate = glm::vec3(pos_x, pos_y, pos_z);
 }
 
 template <typename T>

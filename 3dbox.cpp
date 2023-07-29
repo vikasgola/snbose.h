@@ -80,7 +80,7 @@ int main(void){
         glm::vec3 p = glm::vec3(
             6.0f*rand()/RAND_MAX - 3.0f,
             6.0f*rand()/RAND_MAX - 3.0f,
-            90.0f + 7.0f*rand()/RAND_MAX
+            7.0f*rand()/RAND_MAX
         );
         boxes_positions[i] = p;
         boxes[i].move(p);
@@ -89,8 +89,9 @@ int main(void){
     }
 
     renderer.use_pprojection(45.0f, (float)SCREEN_WIDTH/SCREEN_HEIGHT, 0.1f, 100.0f);
-    renderer.set_camera(glm::vec3(0.0f, 0.0f, -100.0f));
-
+    renderer.set_camera(glm::vec3(0.0f, 0.0f, -15.0f));
+    float lasttime = (float)glfwGetTime();
+    int frames_drawn = 0;
 
     // main event loop and draw whatever we want to draw
     while(!glfwWindowShouldClose(window)){
@@ -98,6 +99,12 @@ int main(void){
         glClearColor(0.05, 0.05, 0.05, 1.0);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         float time = (float)glfwGetTime();
+        frames_drawn++;
+        if(time-lasttime > 1.0){
+            std::cout<<"\rFPS: "<<frames_drawn/(time-lasttime)<<std::flush;
+            lasttime = time;
+            frames_drawn = 0;
+        }
 
         for(int i=0;i<CUBE_COUNT;i++){
             boxes[i].move(
