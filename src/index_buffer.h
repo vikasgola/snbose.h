@@ -10,4 +10,6 @@ class IndexBuffer{
         ~IndexBuffer();
         void bind();
         void unbind();
+
+        inline unsigned int get_count(){return this->count;}
 };

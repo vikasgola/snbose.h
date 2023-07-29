@@ -10,24 +10,38 @@ class Object{
     private:
         VertexArrayBuffer<T> vertex_array_buffer;
         VertexBuffer<T> *vertex_buffer;
-        IndexBuffer *index_buffer;
-        Texture *texture;
+        IndexBuffer *index_buffer = NULL;
+        Texture *texture = NULL;
         unsigned int vertex_size;
-        const unsigned int layout_size;
-        const unsigned int *layout;
+        unsigned int layout_size;
+        unsigned int *layout;
 
         glm::vec3 scale_factor = glm::vec3(1.0);
         glm::vec3 translate = glm::vec3(0.0);
         glm::vec3 rotation_axis = glm::vec3(0.0, 0.0, 1.0);
+        glm::vec4 color = glm::vec4(1.0);
         float rotation_angle = 0.0;
     public:
-        Object(const T *data, const unsigned int *layout, const unsigned int layout_size, const unsigned int vertices_count);
+        Object(const T *data, unsigned int *layout, unsigned int layout_size, const unsigned int vertices_count);
+        Object(const Object<T> &object);
         ~Object();
+        Object();
+        Object<float>& operator=(const Object<float>& object);
         void set_indices(const unsigned int *data, const unsigned int count);
         void set_texture(const Texture &texture);
-        void scale(glm::vec3 factor);
-        void rotate(float angle, glm::vec3 axis);
-        void move(glm::vec3 pos);
+        void set_color(const glm::vec4 color);
+
+        void scale(const glm::vec3 factor);
+        void rotate(const float angle, const glm::vec3 axis);
+        void move(const glm::vec3 pos);
+
+        inline glm::vec4 get_color() {return this->color;}
+        inline unsigned int get_texture(){return this->texture->get_index();}
+        inline unsigned int get_indices_count(){ return this->index_buffer->get_count();}
+
+
+        inline bool have_indices(){ return this->index_buffer != NULL;}
+        inline bool have_texture(){ return this->texture != NULL;}
 
         glm::mat4 get_model_matrix();
 

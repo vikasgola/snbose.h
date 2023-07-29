@@ -1,8 +1,5 @@
 #include "src/helper.h"
 #include "src/shader.h"
-#include "src/vertex_buffer.h"
-#include "src/index_buffer.h"
-#include "src/vertex_array_buffer.h"
 #include "src/texture.h"
 #include "src/object.h"
 
@@ -62,7 +59,7 @@ int main(void){
         -0.5,  0.5, 0.0,    0.0, 1.0,
          0.5,  0.5, 0.0,    1.0, 1.0,
     };
-    const unsigned int vertex_layout[] = {3, 2};
+    unsigned int vertex_layout[] = {3, 2};
     unsigned int indices[] = {
         0, 1, 2,
         1, 2, 3,
@@ -72,6 +69,12 @@ int main(void){
     wall.set_indices(indices, 6);
     wall.set_texture(texture);
 
+    const size_t walls_count = 2;
+    Object<float> walls[walls_count];
+    for(int i=0;i<walls_count;i++){
+        walls[i] = wall;
+    }
+
     // main event loop and draw whatever we want to draw
     while(!glfwWindowShouldClose(window)){
         glClearColor(0.05, 0.05, 0.05, 1.0);
@@ -80,17 +83,23 @@ int main(void){
         float si = fabsf(sinf(time)*0.4f);
 
         // animate the wall
-        wall.scale(glm::vec3(si, si, 1.0));
-        wall.rotate(time, glm::vec3(0.0, 0.0, 1.0));
-        wall.move(glm::vec3(sinf(time), cosf(time), 0.0));
+        for(int i=0;i<walls_count;i++){
+            walls[i].scale(glm::vec3(si, si, 1.0));
+            walls[i].rotate(time+i*10, glm::vec3(0.0, 0.0, 1.0));
+            walls[i].move(glm::vec3(sinf(time+i*10), cosf(time+i*10), 0.0));
+        }
 
         // bind object, texture, and shader
-        wall.bind();
+        walls[0].bind();
         shader_program.bind();
+        shader_program.set_uniformm4f("u_model", glm::value_ptr(walls[0].get_model_matrix()));
+        shader_program.set_uniform1i("u_texture1", texture.get_index());
+        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
 
-        // shader_program.set_uniform4f("u_color", 1.0, 1.0, 1.0, 1.0);
-        shader_program.set_uniform1i("texture1", texture.get_index());
-        shader_program.set_uniformm4f("u_model", glm::value_ptr(wall.get_model_matrix()));
+        walls[1].bind();
+        shader_program.bind();
+        shader_program.set_uniformm4f("u_model", glm::value_ptr(walls[1].get_model_matrix()));
+        shader_program.set_uniform1i("u_texture1", texture.get_index());
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
 
         glfwSwapBuffers(window);
