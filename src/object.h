@@ -35,9 +35,11 @@ class Object{
         void rotate(const float angle, const glm::vec3 axis);
         void move(const glm::vec3 pos);
 
+        inline glm::vec3 get_position(){return this->translate;}
         inline glm::vec4 get_color() {return this->color;}
         inline unsigned int get_texture(){return this->texture->get_index();}
         inline unsigned int get_indices_count(){ return this->index_buffer->get_count();}
+        inline unsigned int get_vertices_count(){ return this->vertex_buffer->get_vertices_count();}
 
 
         inline bool have_indices(){ return this->index_buffer != NULL;}

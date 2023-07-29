@@ -1,10 +1,8 @@
 #include "src/helper.h"
 #include "src/shader.h"
-#include "src/vertex_buffer.h"
-#include "src/index_buffer.h"
-#include "src/vertex_array_buffer.h"
 #include "src/texture.h"
 #include "src/object.h"
+#include "src/renderer.h"
 
 #include<GL/glew.h>
 #include<GLFW/glfw3.h>
@@ -64,39 +62,35 @@ int main(void){
     // creating shaders and textures
     ShaderProgram shader_program("shaders/basic.vs", "shaders/basic.fs");
     Texture texture("assets/container.jpg");
+    Renderer renderer;
 
     const float vertices[] = {
         #include "assets/box.h"
     };
-    const unsigned int vertex_layout[] = {3, 2};
-    Object<float> box(vertices, vertex_layout, 2, 36);
-    box.set_texture(texture);
+    unsigned int vertex_layout[] = {3, 2};
+    Object<float> box_template(vertices, vertex_layout, 2, 36);
+    box_template.set_texture(texture);
 
-    glm::mat4 view = glm::mat4(1.0f);
-    view = glm::translate(view, glm::vec3(0.0f, 0.0f, -100.0f));
-    glm::mat4 projection;
-    projection = glm::perspective(glm::radians(45.0f), (float)SCREEN_WIDTH/SCREEN_HEIGHT, 0.1f, 100.0f);
 
     const size_t CUBE_COUNT = 15;
-    glm::vec3 cube_positions[CUBE_COUNT] = {
-        glm::vec3(4.0f*rand()/RAND_MAX - 2.0f, 4.0f*rand()/RAND_MAX - 2.0f, 90.0f + 7.0f*rand()/RAND_MAX),
-        glm::vec3(4.0f*rand()/RAND_MAX - 2.0f, 4.0f*rand()/RAND_MAX - 2.0f, 90.0f + 7.0f*rand()/RAND_MAX),
-        glm::vec3(4.0f*rand()/RAND_MAX - 2.0f, 4.0f*rand()/RAND_MAX - 2.0f, 90.0f + 7.0f*rand()/RAND_MAX),
-        glm::vec3(4.0f*rand()/RAND_MAX - 2.0f, 4.0f*rand()/RAND_MAX - 2.0f, 90.0f + 7.0f*rand()/RAND_MAX),
-        glm::vec3(4.0f*rand()/RAND_MAX - 2.0f, 4.0f*rand()/RAND_MAX - 2.0f, 90.0f + 7.0f*rand()/RAND_MAX),
+    std::vector<Object<float>> boxes(CUBE_COUNT, box_template);
+    glm::vec3 boxes_positions[CUBE_COUNT];
 
-        glm::vec3(4.0f*rand()/RAND_MAX - 2.0f, 4.0f*rand()/RAND_MAX - 2.0f, 90.0f + 7.0f*rand()/RAND_MAX),
-        glm::vec3(4.0f*rand()/RAND_MAX - 2.0f, 4.0f*rand()/RAND_MAX - 2.0f, 90.0f + 7.0f*rand()/RAND_MAX),
-        glm::vec3(4.0f*rand()/RAND_MAX - 2.0f, 4.0f*rand()/RAND_MAX - 2.0f, 90.0f + 7.0f*rand()/RAND_MAX),
-        glm::vec3(4.0f*rand()/RAND_MAX - 2.0f, 4.0f*rand()/RAND_MAX - 2.0f, 90.0f + 7.0f*rand()/RAND_MAX),
-        glm::vec3(4.0f*rand()/RAND_MAX - 2.0f, 4.0f*rand()/RAND_MAX - 2.0f, 90.0f + 7.0f*rand()/RAND_MAX),
+    for(int i=0;i<CUBE_COUNT;i++){
+        glm::vec3 p = glm::vec3(
+            6.0f*rand()/RAND_MAX - 3.0f,
+            6.0f*rand()/RAND_MAX - 3.0f,
+            90.0f + 7.0f*rand()/RAND_MAX
+        );
+        boxes_positions[i] = p;
+        boxes[i].move(p);
+        boxes[i].scale(glm::vec3(0.7));
+        renderer.add_object(boxes[i], shader_program);
+    }
 
-        glm::vec3(4.0f*rand()/RAND_MAX - 2.0f, 4.0f*rand()/RAND_MAX - 2.0f, 90.0f + 7.0f*rand()/RAND_MAX),
-        glm::vec3(4.0f*rand()/RAND_MAX - 2.0f, 4.0f*rand()/RAND_MAX - 2.0f, 90.0f + 7.0f*rand()/RAND_MAX),
-        glm::vec3(4.0f*rand()/RAND_MAX - 2.0f, 4.0f*rand()/RAND_MAX - 2.0f, 90.0f + 7.0f*rand()/RAND_MAX),
-        glm::vec3(4.0f*rand()/RAND_MAX - 2.0f, 4.0f*rand()/RAND_MAX - 2.0f, 90.0f + 7.0f*rand()/RAND_MAX),
-        glm::vec3(4.0f*rand()/RAND_MAX - 2.0f, 4.0f*rand()/RAND_MAX - 2.0f, 90.0f + 7.0f*rand()/RAND_MAX),
-    };
+    renderer.use_pprojection(45.0f, (float)SCREEN_WIDTH/SCREEN_HEIGHT, 0.1f, 100.0f);
+    renderer.set_camera(glm::vec3(0.0f, 0.0f, -100.0f));
+
 
     // main event loop and draw whatever we want to draw
     while(!glfwWindowShouldClose(window)){
@@ -105,21 +99,13 @@ int main(void){
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         float time = (float)glfwGetTime();
 
-        // bind object, texture, and shader
-        box.bind();
-        shader_program.bind();
-        shader_program.set_uniform1i("texture1", texture.get_index());
-        shader_program.set_uniformm4f("u_view", glm::value_ptr(view));
-        shader_program.set_uniformm4f("u_projection", glm::value_ptr(projection));
         for(int i=0;i<CUBE_COUNT;i++){
-            glm::vec3 t(cube_positions[i]);
-            t.z = cube_positions[i].z + 2.0f*sinf(time);
-            box.scale(glm::vec3(0.7));
-            box.rotate(time+i, glm::vec3(1.0, 1.0, 1.0));
-            box.move(t);
-            shader_program.set_uniformm4f("u_model", glm::value_ptr(box.get_model_matrix()));
-            glDrawArrays(GL_TRIANGLES, 0, 36);
+            boxes[i].move(
+                boxes_positions[i] + glm::vec3(0.0f, 0.0f, 2.0f*sinf(time))
+            );
+            boxes[i].rotate(time+i, glm::vec3(1.0, 1.0, 1.0));
         }
+        renderer.draw();
 
         glfwSwapBuffers(window);
         glfwPollEvents();
