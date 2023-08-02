@@ -107,12 +107,12 @@ int main(void){
         sp.use();
 
         vao.bind(ibo1);
-        sp.set_uniform4f("a_color", glm::vec4(0.80, 0.80, 0.80, 1.0));
+        sp.set_uniform4f("a_color", vec4(0.80, 0.80, 0.80, 1.0));
         glDrawElements(GL_TRIANGLES, 32*6, GL_UNSIGNED_INT, 0);
         vao.unbind();
 
         vao.bind(ibo2);
-        sp.set_uniform4f("a_color", glm::vec4(0.15, 0.15, 0.15, 1.0));
+        sp.set_uniform4f("a_color", vec4(0.15, 0.15, 0.15, 1.0));
         glDrawElements(GL_TRIANGLES, 32*6, GL_UNSIGNED_INT, 0);
         vao.unbind();
 

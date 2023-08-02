@@ -1,6 +1,7 @@
 #pragma once
 #include<string>
-#include<glm/glm.hpp>
+#include "2dphysics/src/vector.h"
+#include "2dphysics/src/matrix.h"
 
 class Shader{
     private:
@@ -28,8 +29,8 @@ class ShaderProgram{
         void use();
         void unbind();
         int get_location(const std::string &name);
-        void set_uniform4f(const std::string &name, const glm::vec4 &value);
+        void set_uniform4f(const std::string &name, const vec4 &value);
         void set_uniform1i(const std::string& name, const unsigned int texture_id);
-        void set_uniformm4f(const std::string& name, const float *mat);
+        void set_uniformm4f(const std::string& name, const mat4& mat);
 
 };

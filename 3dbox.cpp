@@ -6,8 +6,6 @@
 
 #include<GL/glew.h>
 #include<GLFW/glfw3.h>
-#include<glm/glm.hpp>
-#include<glm/gtc/type_ptr.hpp>
 
 #include<iostream>
 #include<random>
@@ -74,29 +72,29 @@ int main(void){
 
     const size_t CUBE_COUNT = 15;
     std::vector<Object<float>> boxes(CUBE_COUNT, box_template);
-    glm::vec3 boxes_positions[CUBE_COUNT];
+    vec3 boxes_positions[CUBE_COUNT];
 
     for(int i=0;i<CUBE_COUNT;i++){
-        glm::vec3 p = glm::vec3(
+        vec3 p = vec3(
             6.0f*rand()/RAND_MAX - 3.0f,
             6.0f*rand()/RAND_MAX - 3.0f,
-            7.0f*rand()/RAND_MAX
+            -7.0f*rand()/RAND_MAX
         );
         boxes_positions[i] = p;
         boxes[i].move(p);
-        boxes[i].scale(glm::vec3(0.7));
+        boxes[i].scale(vec3(0.7));
         renderer.add_object(boxes[i], shader_program);
     }
 
-    renderer.use_pprojection(45.0f, (float)SCREEN_WIDTH/SCREEN_HEIGHT, 0.1f, 100.0f);
-    renderer.set_camera(glm::vec3(0.0f, 0.0f, -15.0f));
+    renderer.use_pprojection(60.0f, (float)SCREEN_WIDTH/SCREEN_HEIGHT, 0.1f, 100.0f);
+    renderer.set_camera(vec3(0.0f, 0.0f, 13.0f));
     float lasttime = (float)glfwGetTime();
     int frames_drawn = 0;
 
     // main event loop and draw whatever we want to draw
     while(!glfwWindowShouldClose(window)){
         check_inputs(window);
-        glClearColor(0.05, 0.05, 0.05, 1.0);
+        glClearColor(0.15, 0.15, 0.15, 1.0);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         if((frames_drawn++)%20 == 0)
             std::cout<<"\rFPS: "<<renderer.FPS<<std::flush;
@@ -104,9 +102,9 @@ int main(void){
         for(int i=0;i<CUBE_COUNT;i++){
             float time = (float)glfwGetTime();
             boxes[i].move(
-                boxes_positions[i] + glm::vec3(0.0f, 0.0f, 2.0f*sinf(time))
+                boxes_positions[i] - vec3(0.0f, 0.0f, 2.0f*sinf(time))
             );
-            boxes[i].rotate(time+i, glm::vec3(1.0, 1.0, 1.0));
+            boxes[i].rotate((time+(float)i)*10.0, vec3(1.0, 1.0, 1.0));
         }
         renderer.draw();
         glfwSwapBuffers(window);

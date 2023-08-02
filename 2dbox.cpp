@@ -5,12 +5,11 @@
 
 #include<GL/glew.h>
 #include<GLFW/glfw3.h>
-#include<glm/glm.hpp>
-#include<glm/gtc/type_ptr.hpp>
 
 #include<iostream>
 #include<random>
 
+using namespace std;
 
 int main(void){
     // initialize the glfw environ
@@ -36,7 +35,7 @@ int main(void){
     glfwMakeContextCurrent(window);
 
     // enable vsync. swap buffers when 0 screen update has happened
-    // glfwSwapInterval(10);
+    glfwSwapInterval(0);
 
     // initialize the glew
     // Needs to bind with opengl on graphic card as OS devloper are bitch
@@ -84,20 +83,20 @@ int main(void){
 
         // animate the wall
         for(int i=0;i<walls_count;i++){
-            walls[i].scale(glm::vec3(si, si, 1.0));
-            walls[i].rotate(time+i*10, glm::vec3(0.0, 0.0, 1.0));
-            walls[i].move(glm::vec3(sinf(time+i*10), cosf(time+i*10), 0.0));
+            walls[i].scale(vec3(si, si, 1.0));
+            walls[i].rotate(((float)i+1.0f+time)*10.0, vec3(0.0, 0.0, 1.0));
+            walls[i].move(vec3(sinf(time+i*10), cosf(time+i*10), 0.0));
         }
         shader_program.use();
 
         // bind object, texture, and shader
         walls[0].bind();
-        shader_program.set_uniformm4f("u_model", glm::value_ptr(walls[0].get_model_matrix()));
+        shader_program.set_uniformm4f("u_model", walls[0].get_model_matrix());
         shader_program.set_uniform1i("u_texture1", texture.get_index());
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
 
         walls[1].bind();
-        shader_program.set_uniformm4f("u_model", glm::value_ptr(walls[1].get_model_matrix()));
+        shader_program.set_uniformm4f("u_model", walls[1].get_model_matrix());
         shader_program.set_uniform1i("u_texture1", texture.get_index());
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
 

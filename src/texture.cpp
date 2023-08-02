@@ -6,7 +6,6 @@
 #include<GL/glew.h>
 
 Texture::Texture(const std::string& file_path){
-    glEnable(GL_TEXTURE_2D);
     glGenTextures(1, &this->id);
     this->data = stbi_load(file_path.c_str(), &this->width, &this->height, &this->channels, 0);
     if(!this->data){

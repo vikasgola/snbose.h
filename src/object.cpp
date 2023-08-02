@@ -1,5 +1,4 @@
 #include "object.h"
-#include <glm/gtc/matrix_transform.hpp>
 
 template <typename T>
 Object<T>::Object(const Object<T> &object): layout_size(object.layout_size), layout(object.layout){
@@ -91,43 +90,43 @@ void Object<T>::set_texture(const Texture &texture){
 }
 
 template <typename T>
-void Object<T>::scale(const glm::vec3 factor){
+void Object<T>::scale(const vec3 factor){
     this->scale_factor = factor;
 }
 
 template <typename T>
 void Object<T>::scale(const float factor_x, const float factor_y, const float factor_z){
-    this->scale_factor = glm::vec3(factor_x, factor_y, factor_z);
+    this->scale_factor = vec3(factor_x, factor_y, factor_z);
 }
 
 template <typename T>
-void Object<T>::set_color(const glm::vec4 color){
+void Object<T>::set_color(const vec4 color){
     this->color = color;
 }
 
 template <typename T>
-void Object<T>::rotate(const float angle, const glm::vec3 axis){
+void Object<T>::rotate(const float angle, const vec3 axis){
     this->rotation_angle = angle;
     this->rotation_axis = axis;
 }
 
 template <typename T>
-void Object<T>::move(const glm::vec3 pos){
+void Object<T>::move(const vec3 pos){
     this->translate = pos;
 }
 
 template <typename T>
 void Object<T>::move(const float pos_x, const float pos_y, const float pos_z){
-    this->translate = glm::vec3(pos_x, pos_y, pos_z);
+    this->translate = vec3(pos_x, pos_y, pos_z);
 }
 
 template <typename T>
-glm::mat4 Object<T>::get_model_matrix(){
-    glm::mat4 trs(1.0);
-    trs = glm::translate(trs, this->translate);
-    trs = glm::rotate(trs, this->rotation_angle, this->rotation_axis);
-    trs = glm::scale(trs, this->scale_factor);
-    return trs;
+mat4 Object<T>::get_model_matrix(){
+    return transform(
+        this->scale_factor,
+        this->rotation_axis*this->rotation_angle,
+        this->translate
+    );
 }
 
 template class Object<float>;

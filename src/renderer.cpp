@@ -1,7 +1,8 @@
 #include "renderer.h"
-#include<glm/gtc/type_ptr.hpp>
+#include "2dphysics/src/vector.h"
+#include "2dphysics/src/matrix.h"
 #include<GL/glew.h>
-#include "helper.h"
+#include<GLFW/glfw3.h>
 
 Renderer::Renderer(){
 }
@@ -9,13 +10,12 @@ Renderer::Renderer(){
 Renderer::~Renderer(){
 }
 
-void Renderer::set_camera(const glm::vec3 view){
-     this->view= glm::mat4(1.0f);
-     this->view = glm::translate(this->view, view);
+void Renderer::set_camera(const vec3 view){
+     this->view = translation(view);
 }
 
 void Renderer::use_pprojection(float fov, float aspect_ratio, float near, float far){
-    this->projection = glm::perspective(glm::radians(45.0f), aspect_ratio, near, far);
+    this->projection = perspective(fov, aspect_ratio, near, far);
 }
 
 void Renderer::add_object(Object<float> &object, ShaderProgram &shader_program){
@@ -37,9 +37,9 @@ void Renderer::draw(){
         object->bind();
         shader_program->use();
         shader_program->set_uniform4f("u_color", object->get_color());
-        shader_program->set_uniformm4f("u_model", glm::value_ptr(object->get_model_matrix()));
-        shader_program->set_uniformm4f("u_view", glm::value_ptr(this->view));
-        shader_program->set_uniformm4f("u_projection", glm::value_ptr(this->projection));
+        shader_program->set_uniformm4f("u_model", object->get_model_matrix());
+        shader_program->set_uniformm4f("u_view", this->view);
+        shader_program->set_uniformm4f("u_projection", this->projection);
 
         if(object->have_texture())
             shader_program->set_uniform1i("u_texture1", object->get_texture());
@@ -55,7 +55,7 @@ void Renderer::draw(){
 }
 
 void Renderer::use_oprojection(float left, float right, float bottom, float top, float near, float far){
-    this->projection = glm::ortho(left, right, bottom, top, near, far);
+    this->projection = ortho(left, right, bottom, top, near, far);
 }
 
 float Renderer::draw_time = -1;

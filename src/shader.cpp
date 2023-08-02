@@ -98,7 +98,7 @@ int ShaderProgram::get_location(const std::string& name){
     return location;
 }
 
-void ShaderProgram::set_uniform4f(const std::string& name, const glm::vec4 &value){
+void ShaderProgram::set_uniform4f(const std::string& name, const vec4 &value){
     int location = this->get_location(name);
     glUniform4f(location, value.x, value.y, value.z, value.w);
 }
@@ -108,7 +108,7 @@ void ShaderProgram::set_uniform1i(const std::string& name, const unsigned int va
     glUniform1i(location, value);
 }
 
-void ShaderProgram::set_uniformm4f(const std::string& name, const float *mat){
+void ShaderProgram::set_uniformm4f(const std::string& name, const mat4& mat){
     int location = this->get_location(name);
-    glUniformMatrix4fv(location, 1, GL_FALSE, mat);
+    glUniformMatrix4fv(location, 1, GL_FALSE, mat.array);
 }
