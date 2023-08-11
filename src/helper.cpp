@@ -17,3 +17,14 @@ GLenum glCheckError_(const char *file, int line){
     }
     return errorCode;
 }
+
+void init_glew(){
+    // initialize the opengl
+    if(glewInit() != GLEW_OK){
+        std::cerr<<"[ERROR]: failed to intialize glew."<<std::endl;
+        exit(EXIT_FAILURE);
+    }
+    std::cout<<"[INFO]: GLEW successfully initialized!"<<std::endl;
+    std::cout<<"[INFO]: OpenGL Version - "<<glGetString(GL_VERSION)<<std::endl;
+    glEnable(GL_DEPTH_TEST);
+}

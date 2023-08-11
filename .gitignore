@@ -31,6 +31,8 @@
 *.out
 *.app
 
+# Mine
+*.json
 main
 2dbox
 3dbox
