@@ -3,6 +3,8 @@
 #include<iostream>
 
 class Window {
+    float ctime;
+    float dt = 0;
     public:
         Window(int width, int height, const char* title);
         ~Window();
@@ -13,6 +15,7 @@ class Window {
         void update();
         void set_hints();
         void set_vsync(int interval);
+        float get_dt();
 
     private:
         GLFWwindow* window;

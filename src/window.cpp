@@ -20,6 +20,7 @@ Window::Window(int width, int height, const char* title): width(width), height(h
     // Set the window resize callback
     glfwSetWindowSizeCallback(window, this->resize_callback);
     this->ready = true;
+    this->ctime = (float)glfwGetTime();
 }
 
 Window::~Window() {
@@ -46,6 +47,9 @@ bool Window::should_close(){
 void Window::update(){
     glfwSwapBuffers(window);
     glfwPollEvents();
+    float t = (float)glfwGetTime();
+    this->dt = t - this->ctime;
+    this->ctime = t;
 }
 
 void Window::set_hints(){
@@ -60,6 +64,10 @@ void Window::set_hints(){
 // the number of screen updates to wait from the time glfwSwapBuffers was called before swapping the buffers and returning.
 void Window::set_vsync(int interval){
     glfwSwapInterval(interval);
+}
+
+float Window::get_dt(){
+    return this->dt;
 }
 
 // glfw: whenever the window size changed (by OS or user resize) this callback function executes

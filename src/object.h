@@ -21,9 +21,11 @@ class Object{
         vec3 translate = vec3(0.0f);
         vec3 rotation_axis = vec3(0.0f, 0.0f, 1.0f);
         vec4 color = vec4(1.0f);
+        mat4 *model;
+        bool external_model_matrix = false;
         float rotation_angle = 0.0;
     public:
-        Object(const T *data, unsigned int *layout, unsigned int layout_size, const unsigned int vertices_count);
+        Object(const T *data, unsigned int *layout, unsigned int layout_size, const unsigned int vertices_count, mat4 *model = nullptr);
         Object(const Object<T> &object);
         ~Object();
         Object();
@@ -48,6 +50,7 @@ class Object{
         inline bool have_indices(){ return this->index_buffer != NULL;}
         inline bool have_texture(){ return this->texture != NULL;}
 
+        void set_model_matrix(mat4 *model);
         mat4 get_model_matrix();
 
         void bind();
