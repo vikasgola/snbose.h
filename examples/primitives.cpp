@@ -1,6 +1,6 @@
-#include "src/shader.h"
-#include "src/helper.h"
-#include "src/object.h"
+#include<snbose/helper.h>
+#include<snbose/shader.h>
+#include<snbose/object.h>
 
 #include<GL/glew.h>
 #include<GLFW/glfw3.h>

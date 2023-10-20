@@ -1,7 +1,7 @@
 #pragma once
 
-#include "vertex_buffer.h"
-#include "index_buffer.h"
+#include<snbose/vertex_buffer.h>
+#include<snbose/index_buffer.h>
 
 template <typename T>
 class VertexArrayBuffer{

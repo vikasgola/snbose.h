@@ -1,4 +1,4 @@
-#include "object.h"
+#include<snbose/object.h>
 
 template <typename T>
 Object<T>::Object(const Object<T> &object): layout_size(object.layout_size), layout(object.layout){

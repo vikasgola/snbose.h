@@ -1,4 +1,4 @@
-#include "vertex_buffer.h"
+#include<snbose/vertex_buffer.h>
 #include<GL/glew.h>
 
 template <typename T>

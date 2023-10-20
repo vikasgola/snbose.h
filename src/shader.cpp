@@ -1,4 +1,4 @@
-#include "shader.h"
+#include<snbose/shader.h>
 #include<GL/glew.h>
 #include<fstream>
 #include<sstream>

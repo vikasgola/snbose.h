@@ -1,8 +1,6 @@
-#include "src/helper.h"
-#include "src/shader.h"
-#include "src/vertex_buffer.h"
-#include "src/index_buffer.h"
-#include "src/vertex_array_buffer.h"
+#include<snbose/helper.h>
+#include<snbose/shader.h>
+#include<snbose/vertex_array_buffer.h>
 
 #include<GL/glew.h>
 #include<GLFW/glfw3.h>

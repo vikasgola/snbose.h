@@ -1,10 +1,8 @@
 #pragma once
-#include "vertex_array_buffer.h"
-#include "vertex_buffer.h"
-#include "index_buffer.h"
-#include "texture.h"
-#include "2dphysics/src/vector.h"
-#include "2dphysics/src/matrix.h"
+
+#include<advmath/advmath.h>
+#include<snbose/texture.h>
+#include<snbose/vertex_array_buffer.h>
 
 template <typename T>
 class Object{

@@ -1,6 +1,5 @@
-#include "renderer.h"
-#include "2dphysics/src/vector.h"
-#include "2dphysics/src/matrix.h"
+#include<snbose/renderer.h>
+#include<advmath/advmath.h>
 #include<GL/glew.h>
 #include<GLFW/glfw3.h>
 

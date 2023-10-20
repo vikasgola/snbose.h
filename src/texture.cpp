@@ -1,7 +1,7 @@
 #define STB_IMAGE_IMPLEMENTATION
 
-#include "texture.h"
-#include "stb_image.h"
+#include<snbose/texture.h>
+#include<stb/stb_image.h>
 #include<iostream>
 #include<GL/glew.h>
 

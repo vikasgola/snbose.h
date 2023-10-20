@@ -1,8 +1,8 @@
 #pragma once
-#include "object.h"
-#include "shader.h"
-#include "2dphysics/src/vector.h"
-#include "2dphysics/src/matrix.h"
+
+#include<snbose/object.h>
+#include<snbose/shader.h>
+#include<advmath/advmath.h>
 #include<vector>
 
 class Renderer{

@@ -1,4 +1,4 @@
-#include "window.h"
+#include<snbose/window.h>
 
 Window::Window(int width, int height, const char* title): width(width), height(height), title(title){
     // Initialize GLFW

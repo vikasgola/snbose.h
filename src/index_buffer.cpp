@@ -1,4 +1,4 @@
-#include "index_buffer.h"
+#include<snbose/index_buffer.h>
 #include<GL/glew.h>
 
 IndexBuffer::IndexBuffer(const unsigned int *data, const unsigned int count): data(data), count(count){

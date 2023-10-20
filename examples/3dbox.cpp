@@ -1,8 +1,8 @@
-#include "src/helper.h"
-#include "src/shader.h"
-#include "src/texture.h"
-#include "src/object.h"
-#include "src/renderer.h"
+#include<snbose/helper.h>
+#include<snbose/shader.h>
+#include<snbose/object.h>
+#include<snbose/texture.h>
+#include<snbose/renderer.h>
 
 #include<GL/glew.h>
 #include<GLFW/glfw3.h>
@@ -63,7 +63,7 @@ int main(void){
     Renderer renderer;
 
     const float vertices[] = {
-        #include "assets/box.h"
+        #include "../assets/box.h"
     };
     unsigned int vertex_layout[] = {3, 2};
     Object<float> box_template(vertices, vertex_layout, 2, 36);

@@ -1,7 +1,6 @@
 #pragma once
 #include<string>
-#include "2dphysics/src/vector.h"
-#include "2dphysics/src/matrix.h"
+#include<advmath/advmath.h>
 
 class Shader{
     private:
