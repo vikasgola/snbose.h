@@ -33,6 +33,8 @@
 
 # Mine
 *.json
+*.dSYM
+
 main
 2dbox
 3dbox
