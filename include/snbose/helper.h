@@ -1,7 +1,6 @@
 #pragma once
 
 #include<GL/glew.h>
-#include<GLFW/glfw3.h>
 #include<iostream>
 
 GLenum glCheckError_(const char *file, int line);
@@ -10,7 +9,6 @@ GLenum glCheckError_(const char *file, int line);
     if(GLenum error = glGetError()){\
         std::cerr<<"[OPENGL ERROR] ("<<error<<"): '"<<#f<<"'"<<std::endl;\
         std::cerr<<"FILE: "<<__FILE__<<" LINE: "<<__LINE__<<std::endl;\
-        glfwTerminate();\
         exit(EXIT_FAILURE);\
     }
 

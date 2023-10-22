@@ -20,7 +20,7 @@ template <typename T>
 Object<T>::Object(
     const T *data, unsigned int *layout,
     unsigned int layout_size,
-    const unsigned int vertices_count, mat4 *model
+    const unsigned int vertices_count
 ) : layout(layout), layout_size(layout_size), vertex_size(0){
     for(int i=0;i<layout_size;i++){
         this->vertex_size += layout[i];
@@ -32,7 +32,6 @@ Object<T>::Object(
         this->vertex_array_buffer.push(layout[i]);
     }
     this->vertex_array_buffer.unbind();
-    this->set_model_matrix(model);
 }
 
 template <typename T>

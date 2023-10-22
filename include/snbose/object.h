@@ -23,7 +23,7 @@ class Object{
         bool external_model_matrix = false;
         float rotation_angle = 0.0;
     public:
-        Object(const T *data, unsigned int *layout, unsigned int layout_size, const unsigned int vertices_count, mat4 *model = nullptr);
+        Object(const T *data, unsigned int *layout, unsigned int layout_size, const unsigned int vertices_count);
         Object(const Object<T> &object);
         ~Object();
         Object();

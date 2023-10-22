@@ -1,5 +1,4 @@
 #include<snbose/renderer.h>
-#include<advmath/advmath.h>
 #include<GL/glew.h>
 #include<GLFW/glfw3.h>
 
@@ -9,8 +8,16 @@ Renderer::Renderer(){
 Renderer::~Renderer(){
 }
 
-void Renderer::set_camera(const vec3 view){
-     this->view = translation(view);
+void Renderer::clear_color(const vec4 color){
+    glClearColor(color.r, color.g, color.b, color.a);
+}
+
+void Renderer::clear_buffer(int buffer){
+    glClear(buffer);
+}
+
+void Renderer::set_camera(Camera &cam){
+     this->camera = &cam;
 }
 
 void Renderer::use_pprojection(float fov, float aspect_ratio, float near, float far){
@@ -37,7 +44,7 @@ void Renderer::draw(){
         shader_program->use();
         shader_program->set_uniform4f("u_color", object->get_color());
         shader_program->set_uniformm4f("u_model", object->get_model_matrix());
-        shader_program->set_uniformm4f("u_view", this->view);
+        shader_program->set_uniformm4f("u_view", this->camera->get_view_matrix());
         shader_program->set_uniformm4f("u_projection", this->projection);
 
         if(object->have_texture())

@@ -40,6 +40,10 @@ bool Window::is_ready(){
     return this->ready;
 }
 
+void Window::close(){
+    glfwSetWindowShouldClose(window, true);
+}
+
 bool Window::should_close(){
     return glfwWindowShouldClose(window);
 }
@@ -68,6 +72,26 @@ void Window::set_vsync(int interval){
 
 float Window::get_dt(){
     return this->dt;
+}
+
+bool Window::is_key_pressed(uint key){
+    return glfwGetKey(this->window, key) == GLFW_PRESS || glfwGetMouseButton(this->window, key);
+}
+
+void Window::capture_mouse(){
+    glfwSetInputMode(this->window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+    this->mouse_captured = true;
+}
+
+void Window::release_mouse(){
+    glfwSetInputMode(this->window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+    this->mouse_captured = false;
+}
+
+std::pair<double, double> Window::get_mouse_pos(){
+    double x = 0, y = 0;
+    glfwGetCursorPos(this->window, &x, &y);
+    return {x, y};
 }
 
 // glfw: whenever the window size changed (by OS or user resize) this callback function executes
