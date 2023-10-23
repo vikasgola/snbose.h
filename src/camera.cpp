@@ -2,7 +2,7 @@
 #include<cmath>
 
 Camera::Camera(){
-    this->position = vec3(0.0, 0.0, 3.0);
+    this->position = vec3(0.0, 0.0, 10.0);
     this->up = vec3(0.0f, 1.0f, 0.0f);
     this->direction = vec3(0.0) - this->position;
     this->view_matrix = lookat(this->position, this->position+this->direction, this->up);
@@ -45,4 +45,12 @@ void Camera::update(){
     this->direction.normalize();
     this->right = this->up.cross(this->direction).normalized();
     this->view_matrix = lookat(this->position, this->position+this->direction, this->up);
+}
+
+void Camera::set_orthographic(float left, float right, float bottom, float top, float near, float far){
+    this->projection = ortho(left, right, bottom, top, near, far);
+}
+
+void Camera::set_perspective(float fov, float aspect_ratio, float near, float far){
+    this->projection = perspective(fov, aspect_ratio, near, far);
 }

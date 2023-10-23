@@ -20,10 +20,6 @@ void Renderer::set_camera(Camera &cam){
      this->camera = &cam;
 }
 
-void Renderer::use_pprojection(float fov, float aspect_ratio, float near, float far){
-    this->projection = perspective(fov, aspect_ratio, near, far);
-}
-
 void Renderer::add_object(Object<float> &object, ShaderProgram &shader_program){
     this->objects.push_back({&object, &shader_program});
 }
@@ -36,6 +32,9 @@ void Renderer::draw(){
     this->FPS = 1.0/(curr_time-this->draw_time);
     this->draw_time = curr_time;
 
+    // add warning
+    if(this->camera == NULL) return;
+
     for(auto &render_unit: this->objects){
         auto object = render_unit.first;
         auto shader_program = render_unit.second;
@@ -45,7 +44,7 @@ void Renderer::draw(){
         shader_program->set_uniform4f("u_color", object->get_color());
         shader_program->set_uniformm4f("u_model", object->get_model_matrix());
         shader_program->set_uniformm4f("u_view", this->camera->get_view_matrix());
-        shader_program->set_uniformm4f("u_projection", this->projection);
+        shader_program->set_uniformm4f("u_projection", this->camera->get_projection_matrix());
 
         if(object->have_texture())
             shader_program->set_uniform1i("u_texture1", object->get_texture());
@@ -58,10 +57,6 @@ void Renderer::draw(){
 
         object->unbind();
     }
-}
-
-void Renderer::use_oprojection(float left, float right, float bottom, float top, float near, float far){
-    this->projection = ortho(left, right, bottom, top, near, far);
 }
 
 float Renderer::draw_time = -1;

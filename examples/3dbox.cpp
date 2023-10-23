@@ -63,9 +63,8 @@ int main(void){
     Renderer renderer;
     Camera camera;
     camera.look_at(vec3(0.0f, 0.0f, 3.0f), vec3(0.0f), vec3(0.0f, 1.0f, 0.0f));
+    camera.set_perspective(60.0f, (float)SCREEN_WIDTH/SCREEN_HEIGHT, 0.1f, 100.0f);
 
-
-    renderer.use_pprojection(60.0f, (float)SCREEN_WIDTH/SCREEN_HEIGHT, 0.1f, 100.0f);
     renderer.set_camera(camera);
 
     const float vertices[] = {
