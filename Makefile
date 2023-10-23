@@ -1,6 +1,12 @@
 CXX=clang++
-CPPFLAGS=-std=c++11
-CPPLIBS=`pkg-config --libs glew glfw3` -framework Cocoa -framework IOKit
+CPPFLAGS=-std=c++11 -ggdb
+CPPLIBS:=`pkg-config --libs glew glfw3`
+
+UNAME_S := $(shell uname -s)
+ifeq ($(UNAME_S),Darwin)
+	CPPLIBS +=  -framework Cocoa -framework IOKit
+endif
+
 
 DEP_DIR=./deps/advmath
 
@@ -40,10 +46,10 @@ $(LIB_DIR)/libsnbose.a: $(OBJS) $(DEPS_OBJS)
 
 $(BUILD_DIR)/%.cpp.o: %.cpp
 	mkdir -p $(dir $@)
-	$(CXX) $(CPPFLAGS) $(INCLUDE_DIR) -c $< -o $@
+	$(CXX) $(CPPFLAGS) -fPIC $(INCLUDE_DIR) -c $< -o $@
 
 $(EXAMPLES_OUT): $(EXAMPLES_SRC)
-	$(CXX) $(CPPFLAGS) $(INCLUDE_DIR) $(CPPLIBS) $(LIB_DIR)/libsnbose.a $@.cpp -o $@
+	$(CXX) $(CPPFLAGS) $(INCLUDE_DIR) $(CPPLIBS) $@.cpp $(LIB_DIR)/libsnbose.a -o $@
 
 
 .PHONY: clean

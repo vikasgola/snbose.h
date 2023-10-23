@@ -82,9 +82,9 @@ int main(void){
 
     for(int i=0;i<CUBE_COUNT;i++){
         vec3 p = vec3(
-            6.0f*rand()/RAND_MAX - 3.0f,
-            6.0f*rand()/RAND_MAX - 3.0f,
-            -7.0f*rand()/RAND_MAX
+            6.0f*((double) rand()/RAND_MAX) - 3.0f,
+            6.0f*((double) rand()/RAND_MAX) - 3.0f,
+            -7.0f*((double) rand()/RAND_MAX)
         );
         boxes_positions[i] = p;
         boxes[i].move(p);
