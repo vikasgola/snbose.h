@@ -86,15 +86,20 @@ void check_inputs(Window &window, Camera &camera){
 
     float dt = window.get_dt();
     vec3 position = camera.get_position();
+
     if(window.is_key_pressed(GLFW_KEY_W)){
-        camera.set_position(position + camera.get_direction()*dt);
-    }else if(window.is_key_pressed(GLFW_KEY_S)){
-        camera.set_position(position - camera.get_direction()*dt);
-    }else if(window.is_key_pressed(GLFW_KEY_A)){
-        camera.set_position(position - camera.get_right()*dt);
-    }else if(window.is_key_pressed(GLFW_KEY_D)){
-        camera.set_position(position + camera.get_right()*dt);
+        position = position + camera.get_direction()*dt;
     }
+    if(window.is_key_pressed(GLFW_KEY_S)){
+        position = position - camera.get_direction()*dt;
+    }
+    if(window.is_key_pressed(GLFW_KEY_A)){
+        position = position - camera.get_right()*dt;
+    }
+    if(window.is_key_pressed(GLFW_KEY_D)){
+        position = position + camera.get_right()*dt;
+    }
+    camera.set_position(position);
 
     static float last_x = SCREEN_WIDTH/2;
     static float last_y = SCREEN_HEIGHT/2;
