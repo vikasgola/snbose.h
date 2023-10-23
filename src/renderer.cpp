@@ -10,10 +10,11 @@ Renderer::~Renderer(){
 
 void Renderer::clear_color(const vec4 color){
     glClearColor(color.r, color.g, color.b, color.a);
+    glClear(GL_COLOR_BUFFER_BIT);
 }
 
-void Renderer::clear_buffer(int buffer){
-    glClear(buffer);
+void Renderer::clear_depth(){
+    glClear(GL_DEPTH_BUFFER_BIT);
 }
 
 void Renderer::set_camera(Camera &cam){
@@ -33,7 +34,7 @@ void Renderer::draw(){
     this->draw_time = curr_time;
 
     // add warning
-    if(this->camera == NULL) return;
+    if(this->camera == nullptr) return;
 
     for(auto &render_unit: this->objects){
         auto object = render_unit.first;

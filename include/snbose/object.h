@@ -8,9 +8,9 @@ template <typename T>
 class Object{
     private:
         VertexArrayBuffer<T> vertex_array_buffer;
-        VertexBuffer<T> *vertex_buffer;
-        IndexBuffer *index_buffer = NULL;
-        Texture *texture = NULL;
+        VertexBuffer<T> *vertex_buffer = nullptr;
+        IndexBuffer *index_buffer = nullptr;
+        Texture *texture = nullptr;
         unsigned int vertex_size;
         unsigned int layout_size;
         unsigned int *layout;
@@ -45,8 +45,8 @@ class Object{
         inline unsigned int get_vertices_count(){ return this->vertex_buffer->get_vertices_count();}
 
 
-        inline bool have_indices(){ return this->index_buffer != NULL;}
-        inline bool have_texture(){ return this->texture != NULL;}
+        inline bool have_indices(){ return this->index_buffer != nullptr;}
+        inline bool have_texture(){ return this->texture != nullptr;}
 
         void set_model_matrix(mat4 *model);
         mat4 get_model_matrix();

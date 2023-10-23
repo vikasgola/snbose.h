@@ -10,14 +10,14 @@ class Renderer{
     private:
         std::vector<std::pair<Object<float>*, ShaderProgram*>> objects;
         static float draw_time;
-        Camera *camera = NULL;
+        Camera *camera = nullptr;
     public:
         float FPS = 0.0f;
         Renderer();
         ~Renderer();
         inline float get_time(){return this->draw_time;}
         void clear_color(const vec4 color);
-        void clear_buffer(int buffer);
+        void clear_depth();
         void set_camera(Camera &cam);
         void add_object(Object<float> &object, ShaderProgram &shader_program);
         void draw();

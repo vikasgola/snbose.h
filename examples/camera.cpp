@@ -58,7 +58,7 @@ int main(void){
     while(!window.should_close()){
         check_inputs(window, camera);
         renderer.clear_color(vec4(0.15, 0.15, 0.15, 1.0));
-        renderer.clear_buffer(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        renderer.clear_depth();
         if((frames_drawn++)%20 == 0)
             std::cout<<"\rFPS: "<<renderer.FPS<<std::flush;
 

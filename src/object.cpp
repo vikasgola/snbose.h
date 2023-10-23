@@ -62,10 +62,10 @@ template <typename T>
 void Object<T>::bind(){
     this->vertex_array_buffer.rebind();
 
-    if(this->index_buffer != NULL)
+    if(this->index_buffer != nullptr)
         this->index_buffer->bind();
 
-    if(this->texture != NULL)
+    if(this->texture != nullptr)
         this->texture->bind();
 }
 
@@ -73,10 +73,10 @@ template <typename T>
 void Object<T>::unbind(){
     this->vertex_array_buffer.unbind();
 
-    if(this->index_buffer != NULL)
+    if(this->index_buffer != nullptr)
         this->index_buffer->unbind();
 
-    if(this->texture != NULL)
+    if(this->texture != nullptr)
         this->texture->unbind();
 }
 
