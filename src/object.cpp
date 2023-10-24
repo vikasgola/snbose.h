@@ -13,7 +13,7 @@ Object<T>::Object(const Object<T> &object): layout_size(object.layout_size), lay
     this->rotation_axis = object.rotation_axis;
     this->color = object.color;
     this->rotation_angle = object.rotation_angle;
-    this->set_model_matrix(object.model);
+    // this->set_model_matrix(object.model);
 }
 
 template <typename T>

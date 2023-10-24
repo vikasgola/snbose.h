@@ -10,11 +10,11 @@ class Camera{
         mat4 view_matrix;
         mat4 projection;
         float pitch = 0.0f;
-        float yaw = -90.0f;
+        float yaw = 90.0f;
         void update();
     public:
         Camera();
-        void look_at(vec3 position, vec3 target, vec3 up);
+        void look_at(vec3 position, vec3 direction, vec3 up);
         void set_position(vec3 position);
         void set_up(vec3 up);
         void set_yaw(float yaw);

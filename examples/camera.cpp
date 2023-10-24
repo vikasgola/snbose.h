@@ -23,7 +23,7 @@ int main(void){
     ShaderProgram shader_program("shaders/advance.vs", "shaders/advance.fs");
     Texture texture("assets/container.jpg");
     Camera camera;
-    camera.look_at(vec3(0.0f, 0.0f, 8.0f), vec3(0.0f), vec3(0.0f, 1.0f, 0.0f));
+    camera.look_at(vec3(0.0f, 0.0f, 8.0f), vec3(0.0f, 0.0f, 1.0f), vec3(0.0f, 1.0f, 0.0f));
     camera.set_perspective(60.0f, (float)SCREEN_WIDTH/SCREEN_HEIGHT, 0.1f, 100.0f);
 
     Renderer renderer;

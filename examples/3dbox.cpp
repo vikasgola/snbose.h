@@ -62,7 +62,7 @@ int main(void){
     Texture texture("assets/container.jpg");
     Renderer renderer;
     Camera camera;
-    camera.look_at(vec3(0.0f, 0.0f, 3.0f), vec3(0.0f), vec3(0.0f, 1.0f, 0.0f));
+    camera.look_at(vec3(0.0f, 0.0f, -2.0f), vec3(0.0f, 0.0f, 1.0f), vec3(0.0f, 1.0f, 0.0f));
     camera.set_perspective(60.0f, (float)SCREEN_WIDTH/SCREEN_HEIGHT, 0.1f, 100.0f);
 
     renderer.set_camera(camera);
@@ -75,7 +75,7 @@ int main(void){
     box_template.set_texture(texture);
 
 
-    const size_t CUBE_COUNT = 15;
+    const size_t CUBE_COUNT = 80;
     std::vector<Object<float>> boxes(CUBE_COUNT, box_template);
     vec3 boxes_positions[CUBE_COUNT];
 
@@ -83,11 +83,11 @@ int main(void){
         vec3 p = vec3(
             6.0f*((double) rand()/RAND_MAX) - 3.0f,
             6.0f*((double) rand()/RAND_MAX) - 3.0f,
-            -7.0f*((double) rand()/RAND_MAX)
+            7.0f*((double) rand()/RAND_MAX)
         );
         boxes_positions[i] = p;
         boxes[i].move(p);
-        boxes[i].scale(vec3(0.7));
+        boxes[i].scale(vec3(0.4));
         renderer.add_object(boxes[i], shader_program);
     }
 

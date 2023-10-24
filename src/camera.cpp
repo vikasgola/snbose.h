@@ -4,15 +4,17 @@
 Camera::Camera(){
     this->position = vec3(0.0, 0.0, 10.0);
     this->up = vec3(0.0f, 1.0f, 0.0f);
-    this->direction = vec3(0.0) - this->position;
+    this->direction = vec3(0.0f, 0.0f, 1.0f);
     this->view_matrix = lookat(this->position, this->position+this->direction, this->up);
     this->right = this->up.cross(this->direction).normalized();
+    this->yaw = this->up.angle(this->direction);
 }
 
-void Camera::look_at(vec3 position, vec3 target, vec3 up){
+void Camera::look_at(vec3 position, vec3 direction, vec3 up){
     this->position = position;
     this->up = up;
-    this->direction = (target-position).normalized();
+    this->direction = direction.normalized();
+    this->yaw = this->up.angle(this->direction);
     this->update();
 }
 
