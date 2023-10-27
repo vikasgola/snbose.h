@@ -108,6 +108,11 @@ void Object<T>::set_color(const vec4 color){
 }
 
 template <typename T>
+void Object<T>::set_type(TYPE type){
+    this->type = type;
+}
+
+template <typename T>
 void Object<T>::rotate(const float angle, const vec3 axis){
     this->rotation_angle = angle;
     this->rotation_axis = axis;

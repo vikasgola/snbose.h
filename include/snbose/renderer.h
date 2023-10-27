@@ -11,6 +11,7 @@ class Renderer{
         std::vector<std::pair<Object<float>*, ShaderProgram*>> objects;
         static float draw_time;
         Camera *camera = nullptr;
+        Object<float> *light = nullptr;
     public:
         float FPS = 0.0f;
         Renderer();

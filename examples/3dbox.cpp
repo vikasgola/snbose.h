@@ -68,7 +68,7 @@ int main(void){
     renderer.set_camera(camera);
 
     const float vertices[] = {
-        #include "../assets/box.h"
+        #include "../assets/box_texture.h"
     };
     unsigned int vertex_layout[] = {3, 2};
     Object<float> box_template(vertices, vertex_layout, 2, 36);

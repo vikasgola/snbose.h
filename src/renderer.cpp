@@ -23,6 +23,9 @@ void Renderer::set_camera(Camera &cam){
 
 void Renderer::add_object(Object<float> &object, ShaderProgram &shader_program){
     this->objects.push_back({&object, &shader_program});
+    if(object.get_type() == Object<float>::TYPE::LIGHT){
+        this->light = &object;
+    }
 }
 
 void Renderer::draw(){
@@ -42,10 +45,16 @@ void Renderer::draw(){
 
         object->bind();
         shader_program->use();
-        shader_program->set_uniform4f("u_color", object->get_color());
+        shader_program->set_uniformf<4>("u_color", object->get_color());
         shader_program->set_uniformm4f("u_model", object->get_model_matrix());
         shader_program->set_uniformm4f("u_view", this->camera->get_view_matrix());
         shader_program->set_uniformm4f("u_projection", this->camera->get_projection_matrix());
+
+        if(object->get_type() != Object<float>::TYPE::LIGHT && this->light != nullptr){
+            shader_program->set_uniformf<4>("u_light_color", this->light->get_color());
+            shader_program->set_uniformf<3>("u_light_pos", this->light->get_position());
+            shader_program->set_uniformf<3>("u_camera_pos", this->camera->get_position());
+        }
 
         if(object->have_texture())
             shader_program->set_uniform1i("u_texture1", object->get_texture());

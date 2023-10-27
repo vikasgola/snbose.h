@@ -6,6 +6,10 @@
 
 template <typename T>
 class Object{
+    public:
+        enum TYPE {
+            OBJECT, LIGHT
+        };
     private:
         VertexArrayBuffer<T> vertex_array_buffer;
         VertexBuffer<T> *vertex_buffer = nullptr;
@@ -14,6 +18,7 @@ class Object{
         unsigned int vertex_size;
         unsigned int layout_size;
         unsigned int *layout;
+        Object<T>::TYPE type = TYPE::OBJECT;
 
         vec3 scale_factor = vec3(1.0f);
         vec3 translate = vec3(0.0f);
@@ -31,6 +36,7 @@ class Object{
         void set_indices(const unsigned int *data, const unsigned int count);
         void set_texture(const Texture &texture);
         void set_color(const vec4 color);
+        void set_type(TYPE type);
 
         void scale(const vec3 factor);
         void scale(const float factor_x, const float factor_y, const float factor_z);
@@ -44,7 +50,7 @@ class Object{
         inline unsigned int get_indices_count(){ return this->index_buffer->get_count();}
         inline unsigned int get_vertices_count(){ return this->vertex_buffer->get_vertices_count();}
 
-
+        inline TYPE get_type(){ return this->type;}
         inline bool have_indices(){ return this->index_buffer != nullptr;}
         inline bool have_texture(){ return this->texture != nullptr;}
 
