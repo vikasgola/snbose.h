@@ -23,9 +23,11 @@ void Renderer::set_camera(Camera &cam){
 
 void Renderer::add_object(Object<float> &object, ShaderProgram &shader_program){
     this->objects.push_back({&object, &shader_program});
-    if(object.get_type() == Object<float>::TYPE::LIGHT){
-        this->light = &object;
-    }
+}
+
+void Renderer::add_light(Light<float> &light, ShaderProgram &shader_program){
+    this->light = &light;
+    this->light_sp = &shader_program;
 }
 
 void Renderer::draw(){
@@ -39,20 +41,46 @@ void Renderer::draw(){
     // add warning
     if(this->camera == nullptr) return;
 
+    if(this->light != nullptr){
+        this->light->bind();
+        this->light_sp->use();
+        this->light_sp->set_uniformf<3>("u_color", this->light->get_ambient());
+        this->light_sp->set_uniformm4f("u_model", this->light->get_model_matrix());
+        this->light_sp->set_uniformm4f("u_view", this->camera->get_view_matrix());
+        this->light_sp->set_uniformm4f("u_projection", this->camera->get_projection_matrix());
+        if(this->light->have_indices()){
+            glDrawElements(GL_TRIANGLES, this->light->get_indices_count(), GL_UNSIGNED_INT, nullptr);
+        }else{
+            glDrawArrays(GL_TRIANGLES, 0, this->light->get_vertices_count());
+        }
+        this->light->unbind();
+    }
+
     for(auto &render_unit: this->objects){
         auto object = render_unit.first;
         auto shader_program = render_unit.second;
+        auto material = object->get_material();
 
         object->bind();
         shader_program->use();
-        shader_program->set_uniformf<4>("u_color", object->get_color());
+        if(shader_program->get_location("u_color") != -1){
+            shader_program->set_uniformf<3>("u_color", material.ambient);
+        }else{
+            shader_program->set_uniformf<3>("material.ambient", material.ambient);
+            shader_program->set_uniformf<3>("material.diffuse", material.diffuse);
+            shader_program->set_uniformf<3>("material.specular", material.specular);
+            shader_program->set_uniform1f("material.shininess", material.shininess);
+        }
+
         shader_program->set_uniformm4f("u_model", object->get_model_matrix());
         shader_program->set_uniformm4f("u_view", this->camera->get_view_matrix());
         shader_program->set_uniformm4f("u_projection", this->camera->get_projection_matrix());
 
-        if(object->get_type() != Object<float>::TYPE::LIGHT && this->light != nullptr){
-            shader_program->set_uniformf<4>("u_light_color", this->light->get_color());
-            shader_program->set_uniformf<3>("u_light_pos", this->light->get_position());
+        if(this->light != nullptr){
+            shader_program->set_uniformf<3>("light.ambient", this->light->get_ambient());
+            shader_program->set_uniformf<3>("light.diffuse", this->light->get_diffuse());
+            shader_program->set_uniformf<3>("light.specular", this->light->get_specular());
+            shader_program->set_uniformf<3>("light.position", this->light->get_position());
             shader_program->set_uniformf<3>("u_camera_pos", this->camera->get_position());
         }
 

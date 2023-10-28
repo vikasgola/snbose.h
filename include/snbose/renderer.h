@@ -11,7 +11,8 @@ class Renderer{
         std::vector<std::pair<Object<float>*, ShaderProgram*>> objects;
         static float draw_time;
         Camera *camera = nullptr;
-        Object<float> *light = nullptr;
+        Light<float> *light = nullptr;
+        ShaderProgram *light_sp = nullptr;
     public:
         float FPS = 0.0f;
         Renderer();
@@ -21,5 +22,6 @@ class Renderer{
         void clear_depth();
         void set_camera(Camera &cam);
         void add_object(Object<float> &object, ShaderProgram &shader_program);
+        void add_light(Light<float> &light, ShaderProgram &shader_program);
         void draw();
 };

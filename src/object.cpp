@@ -1,5 +1,17 @@
 #include<snbose/object.h>
 
+Material::Material(const vec3 ambient, const vec3 diffuse, const vec3 specular, float shininess){
+    this->ambient = ambient;
+    this->diffuse = diffuse;
+    this->specular = specular;
+    this->shininess = shininess;
+}
+
+template<typename T>
+void Object<T>::set_material(const Material material){
+    this->material = material;
+}
+
 template <typename T>
 Object<T>::Object(const Object<T> &object): layout_size(object.layout_size), layout(object.layout){
     this->vertex_array_buffer = object.vertex_array_buffer;
@@ -11,9 +23,8 @@ Object<T>::Object(const Object<T> &object): layout_size(object.layout_size), lay
     this->scale_factor = object.scale_factor;
     this->translate = object.translate;
     this->rotation_axis = object.rotation_axis;
-    this->color = object.color;
     this->rotation_angle = object.rotation_angle;
-    // this->set_model_matrix(object.model);
+    this->material = object.material;
 }
 
 template <typename T>
@@ -53,7 +64,7 @@ Object<float> &Object<T>::operator=(const Object<float> &object){
     this->scale_factor = object.scale_factor;
     this->translate = object.translate;
     this->rotation_axis = object.rotation_axis;
-    this->color = object.color;
+    this->material = object.material;
     this->rotation_angle = object.rotation_angle;
     return *this;
 }
@@ -103,14 +114,12 @@ void Object<T>::scale(const float factor_x, const float factor_y, const float fa
 }
 
 template <typename T>
-void Object<T>::set_color(const vec4 color){
-    this->color = color;
+void Object<T>::set_color(const vec3 color){
+    this->material.ambient = color;
+    this->material.diffuse = color;
+    this->material.specular = color;
 }
 
-template <typename T>
-void Object<T>::set_type(TYPE type){
-    this->type = type;
-}
 
 template <typename T>
 void Object<T>::rotate(const float angle, const vec3 axis){
@@ -148,4 +157,11 @@ mat4 Object<T>::get_model_matrix(){
     );
 }
 
+template <typename T>
+void Light<T>::set_properties(vec3 ambient, vec3 diffuse, vec3 specular){
+    Material m(ambient, diffuse, specular, 0.0f);
+    this->set_material(m);
+}
+
 template class Object<float>;
+template class Light<float>;

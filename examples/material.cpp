@@ -38,8 +38,15 @@ out vec4 color;
 in vec3 normal;
 in vec3 frag_pos;
 
-uniform vec3 u_color = vec3(1.0);
 uniform vec3 u_camera_pos;
+
+struct Material {
+    vec3 ambient;
+    vec3 diffuse;
+    vec3 specular;
+    float shininess;
+};
+uniform Material material;
 
 struct Light {
     vec3 position;
@@ -50,20 +57,17 @@ struct Light {
 uniform Light light;
 
 void main(){
-    float ambient = 0.1;
+    vec3 ambient = light.ambient*material.ambient;
 
     vec3 light_dir = normalize(light.position - frag_pos);
-    float diffu = max(dot(light_dir, normal), 0.0);
+    vec3 diffu = light.diffuse*(max(dot(light_dir, normal), 0.0)*material.diffuse);
 
-    float specular_strength = 0.5;
-    int shininess = 32;
     vec3 refl_dir = reflect(-light_dir, normal);
     vec3 view_dir = normalize(u_camera_pos - frag_pos);
-    float pre_speular = pow(max(dot(view_dir, refl_dir), 0.0), shininess);
-    float specular = specular_strength*pre_speular;
+    float pre_speular = pow(max(dot(view_dir, refl_dir), 0.0), material.shininess);
+    vec3 specular = light.specular*(pre_speular*material.specular);
 
-    vec3 light_prop = ambient*light.ambient + diffu*light.diffuse + specular*light.specular;
-    color = vec4(light_prop, 1.0)*vec4(u_color, 1.0);
+    color = vec4(ambient+diffu+specular, 1.0);
 }
 )OFS";
 
@@ -106,16 +110,27 @@ int main(){
     uint layout[] = {3, 3};
     Object<float> floor(cube_vertices, layout, 2, 36);
     Light<float> light(cube_vertices, layout, 2, 36);
+    Object<float> boxes[2];
 
-    floor.set_color(vec3(1.0f, 0.5f, 0.31f));
+    boxes[0] = floor;
+    boxes[0].move(vec3(4.0f, -1.0f, 4.0f));
+    boxes[0].set_material(MATERIAL_GOLD);
+
+    boxes[1] = floor;
+    boxes[1].move(vec3(-4.0f, -1.0f, -4.0f));
+    boxes[1].set_material(MATERIAL_SILVER);
+
+    floor.set_material(MATERIAL_GOLD);
     floor.scale(8.0f, 1.0f, 8.0f);
     floor.move(vec3(0.0f, -2.0f, 0.0f));
 
-    light.set_color(vec3(1.0f));
+    // light.set_properties(vec3(0.2f), vec3(0.5f), vec3(1.0f));
     light.move(0.0f, 1.0f, 0.0f);
 
     renderer.add_light(light, light_sp);
     renderer.add_object(floor, obj_sp);
+    renderer.add_object(boxes[0], obj_sp);
+    renderer.add_object(boxes[1], obj_sp);
 
     vec3 pos = light.get_position();
     while(!window.should_close()){
@@ -123,7 +138,7 @@ int main(){
         renderer.clear_depth();
         check_inputs(window, camera);
 
-        // light.move(pos+vec3(sinf(renderer.get_time()), 0.0f, cosf(renderer.get_time()))*5.0f);
+        light.move(pos+vec3(sinf(renderer.get_time()), 0.0f, cosf(renderer.get_time()))*5.0f);
         // floor.rotate(renderer.get_time()*2.0f, vec3(1.0, 1.0f, 1.0f));
 
         renderer.draw();

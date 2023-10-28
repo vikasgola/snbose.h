@@ -37,6 +37,7 @@ class ShaderProgram{
         template<uint T>
         void set_uniformf(const std::string &name, const vec<T> &value);
         void set_uniform1i(const std::string& name, const unsigned int texture_id);
+        void set_uniform1f(const std::string& name, const float texture_id);
         void set_uniformm4f(const std::string& name, const mat4& mat);
 
 };

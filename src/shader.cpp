@@ -109,16 +109,15 @@ void ShaderProgram::unbind(){
 }
 
 int ShaderProgram::get_location(const std::string& name){
-    int location = glGetUniformLocation(this->id, name.c_str());
-    if(location == -1){
-        fprintf(stderr, "[ERROR]: Couldn't locate '%s' in shader.\n", name.c_str());
-    }
-    return location;
+    return glGetUniformLocation(this->id, name.c_str());
 }
 
 template<uint T>
 void ShaderProgram::set_uniformf(const std::string& name, const vec<T> &value){
     int location = this->get_location(name);
+    if(location == -1){
+        fprintf(stderr, "[ERROR]: Couldn't locate '%s' in shader.\n", name.c_str());
+    }
     auto gluniform = glUniform4fv;
     switch(T){
         case 1: gluniform = glUniform1fv; break;
@@ -135,11 +134,25 @@ void ShaderProgram::set_uniformf(const std::string& name, const vec<T> &value){
 
 void ShaderProgram::set_uniform1i(const std::string& name, const unsigned int value){
     int location = this->get_location(name);
+    if(location == -1){
+        fprintf(stderr, "[ERROR]: Couldn't locate '%s' in shader.\n", name.c_str());
+    }
     glUniform1i(location, value);
+}
+
+void ShaderProgram::set_uniform1f(const std::string& name, const float value){
+    int location = this->get_location(name);
+    if(location == -1){
+        fprintf(stderr, "[ERROR]: Couldn't locate '%s' in shader.\n", name.c_str());
+    }
+    glUniform1f(location, value);
 }
 
 void ShaderProgram::set_uniformm4f(const std::string& name, const mat4& mat){
     int location = this->get_location(name);
+    if(location == -1){
+        fprintf(stderr, "[ERROR]: Couldn't locate '%s' in shader.\n", name.c_str());
+    }
     glUniformMatrix4fv(location, 1, GL_FALSE, mat.array);
 }
 
