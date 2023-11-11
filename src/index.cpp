@@ -1,7 +1,7 @@
-#include<snbose/index_buffer.h>
+#include<snbose/index.h>
 #include<GL/glew.h>
 
-IndexBuffer::IndexBuffer(const unsigned int *data, const unsigned int count): data(data), count(count){
+IndexBuffer::IndexBuffer(std::vector<unsigned int> indices): indices(indices){
     glGenBuffers(1, &this->id);
 }
 
@@ -11,7 +11,7 @@ IndexBuffer::~IndexBuffer(){
 
 void IndexBuffer::bind(){
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, this->id);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, this->count*sizeof(unsigned int), this->data, GL_STATIC_DRAW);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, this->get_count()*sizeof(indices[0]), &this->indices[0], GL_STATIC_DRAW);
 }
 
 void IndexBuffer::unbind(){

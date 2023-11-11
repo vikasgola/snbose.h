@@ -39,20 +39,12 @@ int main(int argc, char const *argv[]){
 
     // working with points
     glPointSize(10.0f);
-    const float point_vertices[] = {
-        -0.5, -0.5, 0.0
-    };
-    unsigned int point_layout[] = {3};
-    Object<float> point(point_vertices, point_layout, 1, 1);
 
-
-    // working with lines
-    const float line_vertices[] = {
-        0.0, 0.0, 0.0,
-        1.0, 1.0, 0.0,
-    };
-    unsigned int line_layout[] = {3};
-    Object<float> line(line_vertices, line_layout, 1, 2);
+    auto point = Mesh({{.position = vec3(-0.5, -0.5, 0.0)}});
+    auto line = Mesh({
+        {.position = vec3(0.0, 0.0, 0.0)},
+        {.position = vec3(1.0, 1.0, 0.0)},
+    });
 
 
     // GL_TRIANGLES:
@@ -79,11 +71,11 @@ int main(int argc, char const *argv[]){
         glClear(GL_COLOR_BUFFER_BIT);
 
         point.bind();
-        shader_program.use();
+        shader_program.bind();
         glDrawArrays(GL_POINTS, 0, 1);
 
         line.bind();
-        shader_program.use();
+        shader_program.bind();
         glDrawArrays(GL_LINES, 0, 2);
 
         glfwSwapBuffers(window);

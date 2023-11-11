@@ -27,18 +27,22 @@ void Camera::set_pitch(float pitch){
     if(pitch > 89.0f) pitch =  89.0f;
     if(pitch < -89.0f) pitch = -89.0f;
     this->pitch = pitch;
-    this->direction.x = cosf(DEG2RAD(this->yaw))*cosf(DEG2RAD(this->pitch));
-    this->direction.y = sinf(DEG2RAD(this->pitch));
-    this->direction.z = sinf(DEG2RAD(this->yaw))*cosf(DEG2RAD(this->pitch));
+    this->direction = vec3(
+        cosf(DEG2RAD(this->yaw))*cosf(DEG2RAD(this->pitch)),
+        sinf(DEG2RAD(this->pitch)),
+        sinf(DEG2RAD(this->yaw))*cosf(DEG2RAD(this->pitch))
+    );
     this->direction.normalize();
     this->update();
 }
 
 void Camera::set_yaw(float yaw){
     this->yaw = yaw;
-    this->direction.x = cosf(DEG2RAD(this->yaw))*cosf(DEG2RAD(this->pitch));
-    this->direction.y = sinf(DEG2RAD(this->pitch));
-    this->direction.z = sinf(DEG2RAD(this->yaw))*cosf(DEG2RAD(this->pitch));
+    this->direction = vec3(
+        cosf(DEG2RAD(this->yaw))*cosf(DEG2RAD(this->pitch)),
+        sinf(DEG2RAD(this->pitch)),
+        sinf(DEG2RAD(this->yaw))*cosf(DEG2RAD(this->pitch))
+    );
     this->direction.normalize();
     this->update();
 }

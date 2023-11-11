@@ -2,16 +2,16 @@
 
 #include<snbose/texture.h>
 #include<stb/stb_image.h>
-#include<iostream>
 #include<GL/glew.h>
 
-Texture::Texture(const std::string& file_path){
+Texture::Texture(const std::string& file_path, const std::string type): type(type){
     glGenTextures(1, &this->id);
     this->data = stbi_load(file_path.c_str(), &this->width, &this->height, &this->channels, 0);
     if(!this->data){
-        std::cerr<<"ERROR: failed to load file "<<file_path<<std::endl;
+        fprintf(stderr, "ERROR: failed to load file %s\n", file_path.c_str());
     }
     this->index = this->used_index++;
+    this->file_path = file_path;
     this->load();
 }
 
@@ -38,6 +38,10 @@ void Texture::bind(){
 
 void Texture::unbind(){
     glBindTexture(GL_TEXTURE_2D, GL_NONE);
+}
+
+void Texture::reset_index(){
+    Texture::used_index = 0;
 }
 
 unsigned int Texture::used_index = 0;

@@ -2,7 +2,7 @@
 #include<snbose/shader.h>
 #include<snbose/object.h>
 #include<snbose/texture.h>
-#include<snbose/renderer.h>
+#include<snbose/camera.h>
 
 #include<GL/glew.h>
 #include<GLFW/glfw3.h>
@@ -55,28 +55,25 @@ int main(void){
 
     glEnable(GL_DEPTH_TEST);
 
-
-
     // creating shaders and textures
-    ShaderProgram shader_program("shaders/advance.vs", "shaders/advance.fs");
-    Texture texture("assets/container.jpg");
-    Renderer renderer;
+    ShaderProgram shader_program("shaders/3dbox.vs", "shaders/3dbox.fs");
+    Texture texture("assets/container.jpg", "color");
+
     Camera camera;
     camera.look_at(vec3(0.0f, 0.0f, -2.0f), vec3(0.0f, 0.0f, 1.0f), vec3(0.0f, 1.0f, 0.0f));
     camera.set_perspective(60.0f, (float)SCREEN_WIDTH/SCREEN_HEIGHT, 0.1f, 100.0f);
 
-    renderer.set_camera(camera);
-
-    const float vertices[] = {
-        #include "../assets/box_texture.h"
+    const float vertices_float[] = {
+        #include "../assets/box_normal_texture.h"
     };
-    unsigned int vertex_layout[] = {3, 2};
-    Object<float> box_template(vertices, vertex_layout, 2, 36);
-    box_template.set_texture(texture);
+    std::vector<Vertex> vertices(36);
+    memcpy(&vertices[0], vertices_float, sizeof(vertices_float[0])*36*8);
 
+    auto box_mesh = Mesh(vertices, {&texture});
+    Object box_template(box_mesh);
 
     const size_t CUBE_COUNT = 80;
-    std::vector<Object<float>> boxes(CUBE_COUNT, box_template);
+    std::vector<Object> boxes(CUBE_COUNT, box_template);
     vec3 boxes_positions[CUBE_COUNT];
 
     for(int i=0;i<CUBE_COUNT;i++){
@@ -88,17 +85,16 @@ int main(void){
         boxes_positions[i] = p;
         boxes[i].move(p);
         boxes[i].scale(vec3(0.4));
-        renderer.add_object(boxes[i], shader_program);
     }
 
-    int frames_drawn = 0;
     // main event loop and draw whatever we want to draw
     while(!glfwWindowShouldClose(window)){
         check_inputs(window);
         glClearColor(0.15, 0.15, 0.15, 1.0);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        if((frames_drawn++)%20 == 0)
-            std::cout<<"\rFPS: "<<renderer.FPS<<std::flush;
+
+        shader_program.set_uniformm4f("u_view", camera.get_view_matrix());
+        shader_program.set_uniformm4f("u_projection", camera.get_projection_matrix());
 
         for(int i=0;i<CUBE_COUNT;i++){
             float time = (float)glfwGetTime();
@@ -106,8 +102,9 @@ int main(void){
                 boxes_positions[i] - vec3(0.0f, 0.0f, 2.0f*sinf(time))
             );
             boxes[i].rotate((time+(float)i)*10.0, vec3(1.0, 1.0, 1.0));
+            boxes[i].draw(shader_program);
         }
-        renderer.draw();
+
         glfwSwapBuffers(window);
         glfwPollEvents();
     }

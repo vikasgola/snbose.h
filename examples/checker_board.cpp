@@ -1,6 +1,8 @@
 #include<snbose/helper.h>
 #include<snbose/shader.h>
-#include<snbose/vertex_array_buffer.h>
+#include<snbose/vertex_array.h>
+#include<snbose/mesh.h>
+#include<snbose/model.h>
 
 #include<GL/glew.h>
 #include<GLFW/glfw3.h>
@@ -10,15 +12,14 @@
 
 using namespace std;
 
-void create_board(vector<float> &board, vector<unsigned int> &indices, vector<unsigned int> &indices2){
+void create_board(vector<Vertex> &board, vector<unsigned int> &indices, vector<unsigned int> &indices2){
     for(int i=0;i<9;i++){
         for(int j=0;j<9;j++){
             float row = i*2/8.0 - 1;
             float col = j*2/8.0 - 1;
-            int k = (i*9 + j)*3;
-            board[k++] = row;
-            board[k++] = col;
-            board[k++] = 0.0;
+            board.push_back({
+                .position = vec3(row, col, 0.0)
+            });
         }
     }
 
@@ -81,28 +82,25 @@ int main(void){
     // cout<<glGetString(GL_VERSION)<<endl;
 
 
-    vector<float> board_vertices(9*9*3);
+    vector<Vertex> board_vertices;
     vector<unsigned int> indices1(32*3*2);
     vector<unsigned int> indices2(32*3*2);
     create_board(board_vertices, indices1, indices2);
 
     ShaderProgram sp("shaders/checker_board.vs", "shaders/checker_board.fs");
-
-    VertexArrayBuffer<float> vao;
-    VertexBuffer<float> vbo(&board_vertices[0], 3, 9*9);
-    IndexBuffer ibo1(&indices1[0], 32*3*2);
-    IndexBuffer ibo2(&indices2[0], 32*3*2);
-
+    VertexArrayBuffer vao;
+    VertexBuffer vbo(board_vertices);
+    IndexBuffer ibo1(indices1);
+    IndexBuffer ibo2(indices2);
 
     vao.bind(vbo);
-        vao.push(3);
-    vao.unbind();
 
     // main event loop and draw whatever we want to draw
     while(!glfwWindowShouldClose(window)){
         glClearColor(0.05, 0.05, 0.05, 1.0);
         glClear(GL_COLOR_BUFFER_BIT);
-        sp.use();
+
+        sp.bind();
 
         vao.bind(ibo1);
         sp.set_uniformf<4>("a_color", vec4(0.80, 0.80, 0.80, 1.0));

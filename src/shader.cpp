@@ -100,7 +100,7 @@ void ShaderProgram::link(){
 }
 
 
-void ShaderProgram::use(){
+void ShaderProgram::bind(){
     glUseProgram(this->id);
 }
 

@@ -22,16 +22,16 @@ class Shader{
 class ShaderProgram{
     private:
         unsigned int id;
-        void check_error();
         int status;
     public:
+        void check_error();
         ShaderProgram(const Shader vertex_shader, const Shader fragment_shader);
         ShaderProgram(const std::string &vertex_shader_path, const std::string &fragment_shader_path);
         ~ShaderProgram();
 
         static ShaderProgram fromSource(const std::string& vertex_shader_code, const std::string& fragment_shader_code);
         void link();
-        void use();
+        void bind();
         void unbind();
         int get_location(const std::string &name);
         template<uint T>
