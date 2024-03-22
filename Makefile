@@ -1,6 +1,7 @@
 CXX=clang++
 CPPFLAGS=-std=c++11 -ggdb
-CPPLIBS:=`pkg-config --libs glew glfw3`
+CPPLIBS:=`pkg-config --libs glew glfw3 assimp`
+CPPINCLUDE=`pkg-config --cflags assimp`
 
 UNAME_S := $(shell uname -s)
 ifeq ($(UNAME_S),Darwin)
@@ -11,7 +12,7 @@ endif
 DEP_DIR=./deps/advmath
 
 LIB_DIR=./lib
-INCLUDE_DIR=-I./include -I$(DEP_DIR)/include -I./deps/stb/include
+INCLUDE_DIR=-I./include -I$(DEP_DIR)/include -I./deps/stb/include $(CPPINCLUDE)
 SRC_DIRS=./src
 BUILD_DIR=./dist
 

@@ -40,3 +40,7 @@ main
 3dbox
 checker_board
 primitives
+camera
+lighting
+material
+model_loading

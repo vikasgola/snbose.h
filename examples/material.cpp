@@ -4,6 +4,7 @@
 #include<snbose/renderer.h>
 #include<snbose/object.h>
 #include<snbose/shader.h>
+#include<snbose/material.h>
 #include<cmath>
 
 
@@ -93,53 +94,60 @@ int main(){
     window.use();
     init_glew();
 
-    Camera camera;
-    camera.look_at(vec3(0.0f, 2.0f, -8.0f), vec3(0.0f, 0.0f, 1.0f), vec3(0.0f, 1.0f, 0.0f));
-    camera.set_perspective(60.0f, (float)WINDOW_WIDTH/WINDOW_HEIGHT, 0.1f, 100.0f);
-    camera.set_pitch(camera.get_pitch()-10.0f);
 
     Renderer renderer;
-    renderer.set_camera(camera);
+    renderer.camera.look_at(vec3(0.0f, 8.0f, -12.0f), vec3(0.0f, 0.0f, 1.0f), vec3(0.0f, 1.0f, 0.0f));
+    renderer.camera.set_pitch(renderer.camera.get_pitch()-20.0f);
 
     auto obj_sp = ShaderProgram::fromSource(object_vertex_shader, object_fragment_shader);
     auto light_sp = ShaderProgram::fromSource(light_vertex_shader, light_fragment_shader);
 
+    const size_t vertex_size = 6;
     const float cube_vertices[] = {
         #include "../assets/box_normal.h"
     };
-    uint layout[] = {3, 3};
-    Object<float> floor(cube_vertices, layout, 2, 36);
-    Light<float> light(cube_vertices, layout, 2, 36);
-    Object<float> boxes[2];
+    std::vector<Vertex> vertices;
+    for(size_t i=0;i<36;i++)
+        vertices.push_back({
+            .position = vec3(cube_vertices[i*vertex_size], cube_vertices[i*vertex_size+1], cube_vertices[i*vertex_size+2]),
+            .normal = vec3(cube_vertices[i*vertex_size+3], cube_vertices[i*vertex_size+3+1], cube_vertices[i*vertex_size+3+2])
+        });
 
-    boxes[0] = floor;
-    boxes[0].move(vec3(4.0f, -1.0f, 4.0f));
-    boxes[0].set_material(MATERIAL_GOLD);
+    Mesh box_mesh(vertices);
 
-    boxes[1] = floor;
-    boxes[1].move(vec3(-4.0f, -1.0f, -4.0f));
-    boxes[1].set_material(MATERIAL_SILVER);
-
+    Object floor(box_mesh);
     floor.set_material(MATERIAL_GOLD);
     floor.scale(8.0f, 1.0f, 8.0f);
-    floor.move(vec3(0.0f, -2.0f, 0.0f));
 
-    // light.set_properties(vec3(0.2f), vec3(0.5f), vec3(1.0f));
-    light.move(0.0f, 1.0f, 0.0f);
+    Object light(box_mesh);
+    light.move(0.0f, 2.0f, 0.0f);
 
-    renderer.add_light(light, light_sp);
+    std::vector<Object> boxes(2, box_mesh);
+    boxes[0].move(vec3(2.0f, 1.0f, 2.0f));
+    boxes[1].move(vec3(-2.0f, 1.0f, -2.0f));
+    boxes[0].set_material(MATERIAL_EMERALD);
+    boxes[1].set_material(MATERIAL_PEARL);
+
+    // shader properties
+    obj_sp.sv("light.ambient", vec3(0.2f));
+    obj_sp.sv("light.diffuse", vec3(0.5f));
+    obj_sp.sv("light.specular", vec3(1.0f));
+
+    renderer.add_object(light, light_sp);
     renderer.add_object(floor, obj_sp);
     renderer.add_object(boxes[0], obj_sp);
     renderer.add_object(boxes[1], obj_sp);
 
     vec3 pos = light.get_position();
     while(!window.should_close()){
+        check_inputs(window, renderer.camera);
         renderer.clear_color(vec4(0.12f, 0.12f, 0.12f, 1.0f));
         renderer.clear_depth();
-        check_inputs(window, camera);
 
         light.move(pos+vec3(sinf(renderer.get_time()), 0.0f, cosf(renderer.get_time()))*5.0f);
         // floor.rotate(renderer.get_time()*2.0f, vec3(1.0, 1.0f, 1.0f));
+        obj_sp.sv("u_camera_pos", renderer.camera.get_position());
+        obj_sp.sv("light.position", light.get_position());
 
         renderer.draw();
         window.update();

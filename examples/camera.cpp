@@ -1,6 +1,9 @@
 #include<snbose/helper.h>
 #include<snbose/window.h>
 #include<snbose/texture.h>
+#include<snbose/camera.h>
+#include<snbose/shader.h>
+#include<snbose/object.h>
 #include<snbose/renderer.h>
 
 #include<iostream>
@@ -20,24 +23,25 @@ int main(void){
     init_glew();
 
     // creating shaders and textures
-    ShaderProgram shader_program("shaders/advance.vs", "shaders/advance.fs");
-    Texture texture("assets/container.jpg");
-    Camera camera;
-    camera.look_at(vec3(0.0f, 0.0f, -8.0f), vec3(0.0f, 0.0f, 1.0f), vec3(0.0f, 1.0f, 0.0f));
-    camera.set_perspective(60.0f, (float)SCREEN_WIDTH/SCREEN_HEIGHT, 0.1f, 100.0f);
+    ShaderProgram shader_program("shaders/3dbox.vs", "shaders/3dbox.fs");
+    Texture texture("assets/container.jpg", "color");
 
     Renderer renderer;
-    renderer.set_camera(camera);
 
-    const float vertices[] = {
-        #include "../assets/box_texture.h"
+    renderer.camera.look_at(vec3(0.0f, 0.0f, -8.0f), vec3(0.0f, 0.0f, 1.0f), vec3(0.0f, 1.0f, 0.0f));
+
+
+    const float vertices_float[] = {
+        #include "../assets/box_normal_texture.h"
     };
-    unsigned int vertex_layout[] = {3, 2};
-    Object<float> box_template(vertices, vertex_layout, 2, 36);
-    box_template.set_texture(texture);
+    std::vector<Vertex> vertices(36);
+    memcpy(&vertices[0], vertices_float, sizeof(vertices_float[0])*36*8);
 
-    const size_t CUBE_COUNT = 60;
-    std::vector<Object<float>> boxes(CUBE_COUNT, box_template);
+    auto box_mesh = Mesh(vertices, {&texture});
+    Object box_template(box_mesh);
+
+    const size_t CUBE_COUNT = 80;
+    std::vector<Object> boxes(CUBE_COUNT, box_template);
     vec3 boxes_positions[CUBE_COUNT];
 
     for(int i=0;i<CUBE_COUNT;i++){
@@ -53,22 +57,20 @@ int main(void){
     }
 
 
-    int frames_drawn = 0;
     // main event loop and draw whatever we want to draw
     while(!window.should_close()){
-        check_inputs(window, camera);
+        check_inputs(window, renderer.camera);
         renderer.clear_color(vec4(0.15, 0.15, 0.15, 1.0));
         renderer.clear_depth();
-        if((frames_drawn++)%20 == 0)
-            std::cout<<"\rFPS: "<<renderer.FPS<<std::flush;
 
         for(int i=0;i<CUBE_COUNT;i++){
-            float time = renderer.get_time();
-            // boxes[i].move(
-            //     boxes_positions[i] - vec3(0.0f, 0.0f, 2.0f*sinf(time))
-            // );
+            float time = (float)glfwGetTime();
+            boxes[i].move(
+                boxes_positions[i] - vec3(0.0f, 0.0f, 2.0f*sinf(time))
+            );
             boxes[i].rotate((time+(float)i)*10.0, vec3(1.0, 1.0, 1.0));
         }
+
         renderer.draw();
         window.update();
     }

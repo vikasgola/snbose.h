@@ -4,6 +4,7 @@
 #include<snbose/renderer.h>
 #include<snbose/object.h>
 #include<snbose/shader.h>
+#include<snbose/renderer.h>
 #include<cmath>
 
 
@@ -89,44 +90,54 @@ int main(){
     window.use();
     init_glew();
 
-    Camera camera;
-    camera.look_at(vec3(0.0f, 2.0f, -8.0f), vec3(0.0f, 0.0f, 1.0f), vec3(0.0f, 1.0f, 0.0f));
-    camera.set_perspective(60.0f, (float)WINDOW_WIDTH/WINDOW_HEIGHT, 0.1f, 100.0f);
-    camera.set_pitch(camera.get_pitch()-10.0f);
-
     Renderer renderer;
-    renderer.set_camera(camera);
+    renderer.camera.look_at(vec3(0.0f, 2.0f, -8.0f), vec3(0.0f, 0.0f, 1.0f), vec3(0.0f, 1.0f, 0.0f));
 
     auto obj_sp = ShaderProgram::fromSource(object_vertex_shader, object_fragment_shader);
     auto light_sp = ShaderProgram::fromSource(light_vertex_shader, light_fragment_shader);
 
-    const float cube_vertices[] = {
-        #include "../assets/box_normal.h"
+    const size_t vertex_size = 8;
+    const float vertices_float[] = {
+        #include "../assets/box_normal_texture.h"
     };
-    uint layout[] = {3, 3};
-    Object<float> floor(cube_vertices, layout, 2, 36);
-    Light<float> light(cube_vertices, layout, 2, 36);
+    std::vector<Vertex> vertices(36);
+    memcpy(&vertices[0], vertices_float, sizeof(vertices_float[0])*36*vertex_size);
 
+    // floor
+    auto box_mesh = Mesh(vertices);
+
+
+    Object floor(box_mesh);
     floor.set_color(vec3(1.0f, 0.5f, 0.31f));
     floor.scale(8.0f, 1.0f, 8.0f);
     floor.move(vec3(0.0f, -2.0f, 0.0f));
 
+    // light
+    Object light(box_mesh);
     light.set_color(vec3(1.0f));
     light.move(0.0f, 1.0f, 0.0f);
 
-    renderer.add_light(light, light_sp);
+    // shader properties
+    obj_sp.sv("light.ambient", vec3(0.2f));
+    obj_sp.sv("light.diffuse", vec3(0.5f));
+    obj_sp.sv("light.specular", vec3(1.0f));
+
     renderer.add_object(floor, obj_sp);
+    renderer.add_object(light, light_sp);
 
     vec3 pos = light.get_position();
     while(!window.should_close()){
-        renderer.clear_color(vec4(0.12f, 0.12f, 0.12f, 1.0f));
+        check_inputs(window, renderer.camera);
+        renderer.clear_color(vec4(0.15, 0.15, 0.15, 1.0));
         renderer.clear_depth();
-        check_inputs(window, camera);
 
-        // light.move(pos+vec3(sinf(renderer.get_time()), 0.0f, cosf(renderer.get_time()))*5.0f);
-        // floor.rotate(renderer.get_time()*2.0f, vec3(1.0, 1.0f, 1.0f));
+        light.move(pos+vec3(sinf(renderer.get_time()), 0.0f, cosf(renderer.get_time()))*1.0f);
+        floor.rotate(renderer.get_time()*2.0f, vec3(1.0, 1.0f, 1.0f));
 
+        obj_sp.sv("u_camera_pos", renderer.camera.get_position());
+        obj_sp.sv("light.position", light.get_position());
         renderer.draw();
+
         window.update();
     }
     return EXIT_SUCCESS;

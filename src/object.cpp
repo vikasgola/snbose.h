@@ -13,8 +13,23 @@ Object::Object(Mesh &mesh){
 void Object::draw(ShaderProgram &shader_program){
     shader_program.bind();
     shader_program.set_uniformm4f("u_model", this->get_model_matrix());
+    shader_program.sv("u_color", this->get_color());
+
+    if(this->material){
+        shader_program.sv("material.ambient", this->material->ambient);
+        shader_program.sv("material.diffuse", this->material->diffuse);
+        shader_program.sv("material.specular", this->material->specular);
+        shader_program.sv("material.shininess", this->material->shininess);
+    }
     this->model->draw(shader_program);
-    // shader_program.unbind();
+}
+
+void Object::set_color(const vec3 color){
+    this->color = color;
+}
+
+void Object::set_material(Material material){
+    this->material = &material;
 }
 
 void Object::scale(const vec3 factor){

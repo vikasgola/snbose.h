@@ -23,6 +23,17 @@ Mesh::Mesh(std::vector<Vertex> vertices, std::vector<Texture*> textures): Mesh(v
     this->textures = textures;
 }
 
+
+void Mesh::sv(std::string name, vec2 value){
+    this->sv_vec2[name] = value;
+}
+void Mesh::sv(std::string name, vec3 value){
+    this->sv_vec3[name] = value;
+}
+void Mesh::sv(std::string name, vec4 value){
+    this->sv_vec4[name] = value;
+}
+
 void Mesh::send_to_gpu(){
     this->vertex_buffer = new VertexBuffer(this->vertices);
     if(this->indices.size() > 0){
@@ -52,6 +63,17 @@ void Mesh::draw(ShaderProgram &shader_program){
     shader_program.bind();
     this->bind();
 
+
+    for(auto var: this->sv_vec2){
+        shader_program.set_uniformf<2>(var.first, var.second);
+    }
+    for(auto var: this->sv_vec3){
+        shader_program.set_uniformf<3>(var.first, var.second);
+    }
+    for(auto var: this->sv_vec4){
+        shader_program.set_uniformf<4>(var.first, var.second);
+    }
+
     std::unordered_map<std::string, int> texture_types_used;
     for(auto texture: textures){
         auto t_type = texture->get_type();
@@ -69,6 +91,6 @@ void Mesh::draw(ShaderProgram &shader_program){
     else
         glDrawArrays(GL_TRIANGLES, 0, this->vertex_buffer->get_count());
 
-    // this->unbind();
+    this->unbind();
     // shader_program.unbind();
 }

@@ -2,6 +2,7 @@
 #include<snbose/shader.h>
 #include<snbose/texture.h>
 #include<snbose/object.h>
+#include<snbose/renderer.h>
 
 #include<GL/glew.h>
 #include<GLFW/glfw3.h>
@@ -78,18 +79,21 @@ int main(void){
         1, 2, 3,
     };
 
+    Renderer renderer;
+
     auto wall_mesh = Mesh(vertices, indices, vector<Texture*>({&texture}));
     auto wall_obj = Object(wall_mesh);
 
     Object walls[WALL_COUNT];
     for(int i=0;i<WALL_COUNT;i++){
         walls[i] = wall_obj;
+        renderer.add_object(wall_obj, shader_program);
     }
 
     // main event loop and draw whatever we want to draw
     while(!glfwWindowShouldClose(window)){
-        glClearColor(0.05, 0.05, 0.05, 1.0);
-        glClear(GL_COLOR_BUFFER_BIT);
+        renderer.clear_color(vec4(0.05, 0.05, 0.05, 1.0));
+        renderer.clear_depth();
         float time = (float)glfwGetTime();
         float si = fabsf(sinf(time)*0.4f);
 
@@ -98,8 +102,8 @@ int main(void){
             walls[i].scale(vec3(si, si, 1.0));
             walls[i].rotate(((float)i+1.0f+time)*10.0, vec3(0.0, 0.0, 1.0));
             walls[i].move(vec3(sinf(time+2.0*M_PI*i/WALL_COUNT), cosf(time+(float)2.0*M_PI*i/WALL_COUNT), 0.0));
-            walls[i].draw(shader_program);
         }
+        renderer.draw();
 
         glfwSwapBuffers(window);
         glfwPollEvents();

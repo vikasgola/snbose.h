@@ -5,9 +5,10 @@
 #include<snbose/texture.h>
 #include<snbose/shader.h>
 #include<vector>
+#include<map>
 
 class Mesh{
-    public:
+    private:
         bool in_gpu = false;
 
         std::vector<Vertex> vertices;
@@ -18,6 +19,12 @@ class Mesh{
         IndexBuffer *index_buffer = nullptr;
         VertexArrayBuffer vertex_array_buffer;
 
+        std::map<std::string, vec2> sv_vec2;
+        std::map<std::string, vec3> sv_vec3;
+        std::map<std::string, vec4> sv_vec4;
+
+        void send_to_gpu();
+    public:
         Mesh(std::vector<Vertex> vertices, std::vector<unsigned int> indices);
         Mesh(std::vector<Vertex> vertices);
 
@@ -27,6 +34,7 @@ class Mesh{
         void draw(ShaderProgram &shader_program);
         void bind();
         void unbind();
-    private:
-        void send_to_gpu();
+        void sv(std::string name, vec2 value);
+        void sv(std::string name, vec3 value);
+        void sv(std::string name, vec4 value);
 };

@@ -102,6 +102,18 @@ void ShaderProgram::link(){
 
 void ShaderProgram::bind(){
     glUseProgram(this->id);
+    for(auto var: this->sv_float){
+        this->set_uniform1f(var.first, var.second);
+    }
+    for(auto var: this->sv_vec2){
+        this->set_uniformf<2>(var.first, var.second);
+    }
+    for(auto var: this->sv_vec3){
+        this->set_uniformf<3>(var.first, var.second);
+    }
+    for(auto var: this->sv_vec4){
+        this->set_uniformf<4>(var.first, var.second);
+    }
 }
 
 void ShaderProgram::unbind(){
@@ -112,11 +124,25 @@ int ShaderProgram::get_location(const std::string& name){
     return glGetUniformLocation(this->id, name.c_str());
 }
 
+void ShaderProgram::sv(std::string name, float value){
+    this->sv_float[name] = value;
+}
+void ShaderProgram::sv(std::string name, vec2 value){
+    this->sv_vec2[name] = value;
+}
+void ShaderProgram::sv(std::string name, vec3 value){
+    this->sv_vec3[name] = value;
+}
+void ShaderProgram::sv(std::string name, vec4 value){
+    this->sv_vec4[name] = value;
+}
+
 template<uint T>
 void ShaderProgram::set_uniformf(const std::string& name, const vec<T> &value){
     int location = this->get_location(name);
     if(location == -1){
         fprintf(stderr, "[ERROR]: Couldn't locate '%s' in shader.\n", name.c_str());
+        return;
     }
     auto gluniform = glUniform4fv;
     switch(T){

@@ -8,6 +8,7 @@ Camera::Camera(){
     this->view_matrix = lookat(this->position, this->position+this->direction, this->up);
     this->right = this->up.cross(this->direction).normalized();
     this->yaw = RAD2DEG(this->up.angle(this->direction));
+    this->set_perspective(60.0f, 800.0f/600.0f, 0.1f, 100.0f);
 }
 
 void Camera::look_at(vec3 position, vec3 direction, vec3 up){

@@ -2,6 +2,7 @@
 #include<advmath/advmath.h>
 #include<snbose/model.h>
 #include<snbose/shader.h>
+#include<snbose/material.h>
 
 class Object{
     private:
@@ -10,6 +11,8 @@ class Object{
         vec3 translate = vec3(0.0f);
         vec3 rotation_axis = vec3(0.0f, 0.0f, 1.0f);
         float rotation_angle = 0.0;
+        vec3 color = vec3(1.0f);
+        Material *material = nullptr;
     public:
         Object();
         Object(Mesh &mesh);
@@ -17,6 +20,8 @@ class Object{
         Object& operator=(const Object &object);
         void draw(ShaderProgram &shader_program);
 
+        void set_color(const vec3 color);
+        void set_material(Material material);
         void scale(const vec3 factor);
         void scale(const float factor_x, const float factor_y, const float factor_z);
         void rotate(const float angle, const vec3 axis);
@@ -25,4 +30,5 @@ class Object{
 
         mat4 get_model_matrix();
         inline vec3 get_position(){return this->translate;}
+        inline vec3 get_color(){return this->color;}
 };

@@ -3,6 +3,7 @@
 #include<snbose/object.h>
 #include<snbose/texture.h>
 #include<snbose/camera.h>
+#include<snbose/renderer.h>
 
 #include<GL/glew.h>
 #include<GLFW/glfw3.h>
@@ -59,9 +60,8 @@ int main(void){
     ShaderProgram shader_program("shaders/3dbox.vs", "shaders/3dbox.fs");
     Texture texture("assets/container.jpg", "color");
 
-    Camera camera;
-    camera.look_at(vec3(0.0f, 0.0f, -2.0f), vec3(0.0f, 0.0f, 1.0f), vec3(0.0f, 1.0f, 0.0f));
-    camera.set_perspective(60.0f, (float)SCREEN_WIDTH/SCREEN_HEIGHT, 0.1f, 100.0f);
+    Renderer renderer;
+    renderer.camera.look_at(vec3(0.0f, 0.0f, -2.0f), vec3(0.0f, 0.0f, 1.0f), vec3(0.0f, 1.0f, 0.0f));
 
     const float vertices_float[] = {
         #include "../assets/box_normal_texture.h"
@@ -85,16 +85,14 @@ int main(void){
         boxes_positions[i] = p;
         boxes[i].move(p);
         boxes[i].scale(vec3(0.4));
+        renderer.add_object(boxes[i], shader_program);
     }
 
     // main event loop and draw whatever we want to draw
     while(!glfwWindowShouldClose(window)){
         check_inputs(window);
-        glClearColor(0.15, 0.15, 0.15, 1.0);
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-        shader_program.set_uniformm4f("u_view", camera.get_view_matrix());
-        shader_program.set_uniformm4f("u_projection", camera.get_projection_matrix());
+        renderer.clear_color(vec4(0.15, 0.15, 0.15, 1.0));
+        renderer.clear_depth();
 
         for(int i=0;i<CUBE_COUNT;i++){
             float time = (float)glfwGetTime();
@@ -102,8 +100,9 @@ int main(void){
                 boxes_positions[i] - vec3(0.0f, 0.0f, 2.0f*sinf(time))
             );
             boxes[i].rotate((time+(float)i)*10.0, vec3(1.0, 1.0, 1.0));
-            boxes[i].draw(shader_program);
         }
+
+        renderer.draw();
 
         glfwSwapBuffers(window);
         glfwPollEvents();
