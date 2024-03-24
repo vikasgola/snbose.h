@@ -32,15 +32,12 @@ void Renderer::draw(){
     this->draw_time = curr_time;
 
     for(auto &render_unit: this->objects){
-        auto object = render_unit.first;
-        auto shader_program = render_unit.second;
-        shader_program->bind();
+        auto &object = render_unit.first;
+        auto &shader_program = render_unit.second;
 
-        shader_program->set_uniformm4f("u_view", this->camera.get_view_matrix());
-        shader_program->set_uniformm4f("u_projection", this->camera.get_projection_matrix());
+        shader_program->sv<mat4>("u_view",       this->camera.get_view_matrix());
+        shader_program->sv<mat4>("u_projection", this->camera.get_projection_matrix());
         object->draw(*shader_program);
-
-        shader_program->unbind();
     }
 }
 

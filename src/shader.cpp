@@ -102,39 +102,111 @@ void ShaderProgram::link(){
 
 void ShaderProgram::bind(){
     glUseProgram(this->id);
-    for(auto var: this->sv_float){
-        this->set_uniform1f(var.first, var.second);
-    }
-    for(auto var: this->sv_vec2){
-        this->set_uniformf<2>(var.first, var.second);
-    }
-    for(auto var: this->sv_vec3){
-        this->set_uniformf<3>(var.first, var.second);
-    }
-    for(auto var: this->sv_vec4){
-        this->set_uniformf<4>(var.first, var.second);
+
+    for(auto &var: this->sp_vars){
+        int location = this->get_location(var.first);
+        if(location == -1){
+            // fprintf(stderr, "[ERROR]: Couldn't locate '%s' in shader.\n", var.first.c_str());
+            continue;
+        }
+
+        auto &data = var.second;
+        switch (var.second.type){
+            case sp_var_type::FLOAT:
+                glUniform1f(location, data.float_data);
+                break;
+            case sp_var_type::UINT:{
+                glUniform1i(location, data.unsigned_data);
+                break;
+            }
+            case sp_var_type::VEC2:
+                glUniform2fv(location, 1, data.vec2_data.array);
+                break;
+            case sp_var_type::VEC3:
+                glUniform3fv(location, 1, data.vec3_data.array);
+                break;
+            case sp_var_type::VEC4:
+                glUniform4fv(location, 1, data.vec4_data.array);
+                break;
+            case sp_var_type::MAT4x4:
+                glUniformMatrix4fv(location, 1, GL_FALSE, data.mat4_data.array);
+                break;
+            default:
+                fprintf(stderr, "[ERROR]: Don't know how to transafer var of type %d.\n", data.type);
+                break;
+        }
     }
 }
 
 void ShaderProgram::unbind(){
     glUseProgram(GL_NONE);
+    // Clear all set shader variables to remove unexpected problems in future.
+    this->sp_vars.clear();
 }
 
 int ShaderProgram::get_location(const std::string& name){
     return glGetUniformLocation(this->id, name.c_str());
 }
 
-void ShaderProgram::sv(std::string name, float value){
-    this->sv_float[name] = value;
+template<typename T>
+void ShaderProgram::sv(std::string name, T data){
+    fprintf(stderr, "[ERROR]: NOT IMPLEMENTED! %s", name);
 }
-void ShaderProgram::sv(std::string name, vec2 value){
-    this->sv_vec2[name] = value;
+
+template<>
+void ShaderProgram::sv<float>(std::string name, float data){
+    sp_var var;
+    var.float_data = data;
+    var.type = sp_var_type::FLOAT;
+    this->sp_vars[name] = var;
 }
-void ShaderProgram::sv(std::string name, vec3 value){
-    this->sv_vec3[name] = value;
+
+template<>
+void ShaderProgram::sv<vec2>(std::string name, vec2 data){
+    sp_var var;
+    var.vec2_data = data;
+    var.type = sp_var_type::VEC2;
+    this->sp_vars[name] = var;
 }
-void ShaderProgram::sv(std::string name, vec4 value){
-    this->sv_vec4[name] = value;
+
+template<>
+void ShaderProgram::sv<vec3>(std::string name, vec3 data){
+    sp_var var;
+    var.vec3_data = data;
+    var.type = sp_var_type::VEC3;
+    this->sp_vars[name] = var;
+}
+
+template<>
+void ShaderProgram::sv<vec4>(std::string name, vec4 data){
+    sp_var var;
+    var.vec4_data = data;
+    var.type = sp_var_type::VEC4;
+    this->sp_vars[name] = var;
+}
+
+template<>
+void ShaderProgram::sv<mat4>(std::string name, mat4 data){
+    sp_var var;
+    var.mat4_data = data;
+    var.type = sp_var_type::MAT4x4;
+    this->sp_vars[name] = var;
+}
+
+template<>
+void ShaderProgram::sv<int>(std::string name, int data){
+    sp_var var;
+    var.int_data = data;
+    var.type = sp_var_type::INT;
+    this->sp_vars[name] = var;
+}
+
+template<>
+void ShaderProgram::sv<unsigned>(std::string name, unsigned data){
+    sp_var var;
+    var.unsigned_data = data;
+    var.type = sp_var_type::UINT;
+    this->sp_vars[name] = var;
 }
 
 template<uint T>
@@ -155,7 +227,6 @@ void ShaderProgram::set_uniformf(const std::string& name, const vec<T> &value){
             return;
     }
     gluniform(location, 1, value.array);
-    // glUniform4f(location, value.x, value.y, value.z, value.w);
 }
 
 void ShaderProgram::set_uniform1i(const std::string& name, const unsigned int value){

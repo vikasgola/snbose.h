@@ -118,9 +118,9 @@ int main(){
     light.move(0.0f, 1.0f, 0.0f);
 
     // shader properties
-    obj_sp.sv("light.ambient", vec3(0.2f));
-    obj_sp.sv("light.diffuse", vec3(0.5f));
-    obj_sp.sv("light.specular", vec3(1.0f));
+    obj_sp.sv<vec3>("light.ambient", vec3(0.2f));
+    obj_sp.sv<vec3>("light.diffuse", vec3(0.5f));
+    obj_sp.sv<vec3>("light.specular", vec3(1.0f));
 
     renderer.add_object(floor, obj_sp);
     renderer.add_object(light, light_sp);
@@ -134,8 +134,8 @@ int main(){
         light.move(pos+vec3(sinf(renderer.get_time()), 0.0f, cosf(renderer.get_time()))*1.0f);
         floor.rotate(renderer.get_time()*2.0f, vec3(1.0, 1.0f, 1.0f));
 
-        obj_sp.sv("u_camera_pos", renderer.camera.get_position());
-        obj_sp.sv("light.position", light.get_position());
+        obj_sp.sv<vec3>("u_camera_pos", renderer.camera.get_position());
+        obj_sp.sv<vec3>("light.position", light.get_position());
         renderer.draw();
 
         window.update();

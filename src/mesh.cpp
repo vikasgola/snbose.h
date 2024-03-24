@@ -56,7 +56,6 @@ void Mesh::send_to_gpu(){
     this->vertex_array_buffer.bind(*this->vertex_buffer);
     this->vertex_array_buffer.unbind();
     this->in_gpu = true;
-    fprintf(stdout, "[INFO]: sending to gpu. RIP!\n");
 }
 
 void Mesh::bind(){
@@ -75,19 +74,15 @@ void Mesh::unbind(){
 }
 
 void Mesh::draw(ShaderProgram &shader_program){
-    shader_program.bind();
-    this->bind();
-
-
-    for(auto var: this->sv_vec2){
-        shader_program.set_uniformf<2>(var.first, var.second);
-    }
-    for(auto var: this->sv_vec3){
-        shader_program.set_uniformf<3>(var.first, var.second);
-    }
-    for(auto var: this->sv_vec4){
-        shader_program.set_uniformf<4>(var.first, var.second);
-    }
+    // for(auto var: this->sv_vec2){
+    //     shader_program.set_uniformf<2>(var.first, var.second);
+    // }
+    // for(auto var: this->sv_vec3){
+    //     shader_program.set_uniformf<3>(var.first, var.second);
+    // }
+    // for(auto var: this->sv_vec4){
+    //     shader_program.set_uniformf<4>(var.first, var.second);
+    // }
 
     std::unordered_map<std::string, int> texture_types_used;
     for(auto &texture: textures){
@@ -96,16 +91,20 @@ void Mesh::draw(ShaderProgram &shader_program){
         else texture_types_used[t_type]++;
 
         auto name = "u_texture_" + t_type + std::to_string(texture_types_used[t_type]);
-        // fprintf(stdout, "[INFO]: name %s.\n", t_type.c_str());
         texture.bind();
-        shader_program.set_uniform1i(name, texture.get_index());
+        shader_program.sv<unsigned>(name, texture.get_index());
     }
 
-    if(this->index_buffer != nullptr)
+    this->bind();
+    shader_program.bind();
+    if(this->index_buffer != nullptr){
         glDrawElements(GL_TRIANGLES, this->index_buffer->get_count(), GL_UNSIGNED_INT, nullptr);
-    else
+    }else{
         glDrawArrays(GL_TRIANGLES, 0, this->vertex_buffer->get_count());
-
+    }
+    shader_program.unbind();
     this->unbind();
-    // shader_program.unbind();
+
+    // check for any error in OpenGL
+    glCheckError();
 }

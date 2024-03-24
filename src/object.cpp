@@ -11,15 +11,14 @@ Object::Object(Mesh &mesh){
 }
 
 void Object::draw(ShaderProgram &shader_program){
-    shader_program.bind();
-    shader_program.set_uniformm4f("u_model", this->get_model_matrix());
-    // shader_program.sv("u_color", this->get_color());
+    shader_program.sv<mat4>("u_model", this->get_model_matrix());
+    shader_program.sv<vec3>("u_color", this->get_color());
 
     if(this->material != nullptr){
-        shader_program.sv("material.ambient", this->material->ambient);
-        shader_program.sv("material.diffuse", this->material->diffuse);
-        shader_program.sv("material.specular", this->material->specular);
-        shader_program.sv("material.shininess", this->material->shininess);
+        shader_program.sv<vec3>("material.ambient", this->material->ambient);
+        shader_program.sv<vec3>("material.diffuse", this->material->diffuse);
+        shader_program.sv<vec3>("material.specular", this->material->specular);
+        shader_program.sv<float>("material.shininess", this->material->shininess);
     }
     this->model.draw(shader_program);
 }

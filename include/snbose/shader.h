@@ -21,24 +21,37 @@ class Shader{
 };
 
 class ShaderProgram{
+    public:
+        enum sp_var_type{
+            FLOAT, VEC2, VEC3, VEC4, MAT4x4, INT, UINT
+        };
+
+        struct sp_var{
+            sp_var_type type;
+            union {
+                int int_data;
+                unsigned unsigned_data;
+                float float_data;
+                vec2 vec2_data;
+                vec3 vec3_data;
+                vec4 vec4_data;
+                mat4 mat4_data;
+            };
+            sp_var(){}
+            ~sp_var(){}
+        };
     private:
         unsigned int id;
         int status;
-        std::map<std::string, float> sv_float;
-        std::map<std::string, vec2> sv_vec2;
-        std::map<std::string, vec3> sv_vec3;
-        std::map<std::string, vec4> sv_vec4;
-
+        std::map<std::string, sp_var> sp_vars;
     public:
         void check_error();
         ShaderProgram(const Shader vertex_shader, const Shader fragment_shader);
         ShaderProgram(const std::string &vertex_shader_path, const std::string &fragment_shader_path);
         ~ShaderProgram();
 
-        void sv(std::string name, float value);
-        void sv(std::string name, vec2 value);
-        void sv(std::string name, vec3 value);
-        void sv(std::string name, vec4 value);
+        template<typename T>
+        void sv(std::string name, T data);
 
         static ShaderProgram fromSource(const std::string& vertex_shader_code, const std::string& fragment_shader_code);
         void link();
