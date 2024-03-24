@@ -17,6 +17,9 @@ class Texture{
     public:
         Texture(const std::string& file_path, const std::string type);
         ~Texture();
+
+        Texture& operator=(const Texture &texture);
+
         void bind();
         void load();
         void unbind();

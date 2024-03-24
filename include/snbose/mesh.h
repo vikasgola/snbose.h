@@ -13,7 +13,7 @@ class Mesh{
 
         std::vector<Vertex> vertices;
         std::vector<unsigned int> indices;
-        std::vector<Texture*> textures;
+        std::vector<Texture> textures;
 
         VertexBuffer *vertex_buffer = nullptr;
         IndexBuffer *index_buffer = nullptr;
@@ -28,8 +28,10 @@ class Mesh{
         Mesh(std::vector<Vertex> vertices, std::vector<unsigned int> indices);
         Mesh(std::vector<Vertex> vertices);
 
-        Mesh(std::vector<Vertex> vertices, std::vector<unsigned int> indices, std::vector<Texture*> textures);
-        Mesh(std::vector<Vertex> vertices, std::vector<Texture*> textures);
+        Mesh(std::vector<Vertex> vertices, std::vector<unsigned int> indices, std::vector<Texture> textures);
+        Mesh(std::vector<Vertex> vertices, std::vector<Texture> textures);
+
+        Mesh& operator=(const Mesh &object);
 
         void draw(ShaderProgram &shader_program);
         void bind();
@@ -37,4 +39,6 @@ class Mesh{
         void sv(std::string name, vec2 value);
         void sv(std::string name, vec3 value);
         void sv(std::string name, vec4 value);
+
+        friend class Model;
 };

@@ -76,7 +76,7 @@ int main(void){
         1, 2, 3,
     };
 
-    auto wall = Mesh(vertices, indices, vector<Texture*>({&texture}));
+    auto wall = Mesh(vertices, indices, {texture});
 
     // main event loop and draw whatever we want to draw
     while(!glfwWindowShouldClose(window)){

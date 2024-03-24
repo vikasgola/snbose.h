@@ -5,7 +5,7 @@
 *.slo
 *.lo
 *.o
-*.obj
+# *.obj
 
 # Precompiled Headers
 *.gch
@@ -35,6 +35,8 @@
 *.json
 *.dSYM
 
+.DS_Store
+
 main
 2dbox
 3dbox
@@ -44,3 +46,5 @@ camera
 lighting
 material
 model_loading
+mesh
+model

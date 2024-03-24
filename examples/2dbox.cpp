@@ -81,7 +81,7 @@ int main(void){
 
     Renderer renderer;
 
-    auto wall_mesh = Mesh(vertices, indices, vector<Texture*>({&texture}));
+    auto wall_mesh = Mesh(vertices, indices, {texture});
     auto wall_obj = Object(wall_mesh);
 
     Object walls[WALL_COUNT];

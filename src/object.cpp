@@ -3,25 +3,25 @@
 Object::Object(){}
 
 Object::Object(Model &model){
-    this->model = &model;
+    this->model = model;
 }
 
 Object::Object(Mesh &mesh){
-    this->model = new Model({&mesh});
+    this->model = Model({mesh});
 }
 
 void Object::draw(ShaderProgram &shader_program){
     shader_program.bind();
     shader_program.set_uniformm4f("u_model", this->get_model_matrix());
-    shader_program.sv("u_color", this->get_color());
+    // shader_program.sv("u_color", this->get_color());
 
-    if(this->material){
+    if(this->material != nullptr){
         shader_program.sv("material.ambient", this->material->ambient);
         shader_program.sv("material.diffuse", this->material->diffuse);
         shader_program.sv("material.specular", this->material->specular);
         shader_program.sv("material.shininess", this->material->shininess);
     }
-    this->model->draw(shader_program);
+    this->model.draw(shader_program);
 }
 
 void Object::set_color(const vec3 color){

@@ -69,7 +69,7 @@ int main(void){
     std::vector<Vertex> vertices(36);
     memcpy(&vertices[0], vertices_float, sizeof(vertices_float[0])*36*8);
 
-    auto box_mesh = Mesh(vertices, {&texture});
+    auto box_mesh = Mesh(vertices, {texture});
     Object box_template(box_mesh);
 
     const size_t CUBE_COUNT = 80;
