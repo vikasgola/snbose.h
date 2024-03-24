@@ -15,7 +15,7 @@ LIB_DIR=./lib
 INCLUDE_DIR=-I./include -I$(DEP_DIR)/include -I./deps/stb/include $(CPPINCLUDE)
 SRC_DIRS=./src
 BUILD_DIR=./dist
-EXAMPLE_DIR=./examples
+EXAMPLE_DIR=examples
 
 
 DEPS_OBJS := $(shell find $(DEP_DIR) -name '*.o')

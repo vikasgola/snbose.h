@@ -87,6 +87,7 @@ void Mesh::draw(ShaderProgram &shader_program){
     std::unordered_map<std::string, int> texture_types_used;
     for(auto &texture: textures){
         auto t_type = texture.get_type();
+        std::transform(t_type.begin(), t_type.end(), t_type.begin(), ::tolower);
         if(texture_types_used.find(t_type) == texture_types_used.end()) texture_types_used[t_type] = 1;
         else texture_types_used[t_type]++;
 
