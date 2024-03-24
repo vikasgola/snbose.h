@@ -31,10 +31,21 @@ int main(void){
     renderer.camera.look_at(vec3(0.0f, 0.0f, -20.0f), vec3(0.0f, 0.0f, 1.0f), vec3(0.0f, 1.0f, 0.0f));
 
     Model model("./assets/bagpack/model.obj");
-    Object bagpack(model);
-    bagpack.scale(vec3(0.1f));
+    const size_t BAGPACKS_COUNT = 100;
+    std::vector<Object> bagpacks(BAGPACKS_COUNT, model);
+    vec3 bagpack_positions[BAGPACKS_COUNT];
 
-    renderer.add_object(bagpack, shader_program);
+    for(int i=0;i<100;i++){
+        vec3 p = vec3(
+            100.0f*((double) rand()/RAND_MAX) - 50.0f,
+            100.0f*((double) rand()/RAND_MAX) - 50.0f,
+            7.0f*((double) rand()/RAND_MAX)
+        );
+        bagpack_positions[i] = p;
+        bagpacks[i].move(p);
+        bagpacks[i].scale(vec3(0.02));
+        renderer.add_object(bagpacks[i], shader_program);
+    }
 
     int counter = 0;
     // main event loop and draw whatever we want to draw
@@ -42,8 +53,16 @@ int main(void){
         check_inputs(window, renderer.camera);
         renderer.clear_color(vec4(0.15, 0.15, 0.15, 1.0));
         renderer.clear_depth();
-        std::cout<<renderer.FPS<<std::endl;
+        if(counter % 5 == 0)
+            std::cout<<"\rFPS:"<<renderer.FPS<<std::flush;
 
+        for(int i=0;i<BAGPACKS_COUNT;i++){
+            float time = (float)glfwGetTime();
+            bagpacks[i].move(
+                bagpack_positions[i] - vec3(0.0f, 0.0f, 20.0f*sinf(time))
+            );
+            bagpacks[i].rotate((time+(float)i)*10.0, vec3(1.0, 1.0, 1.0));
+        }
         renderer.draw();
         window.update();
         counter++;

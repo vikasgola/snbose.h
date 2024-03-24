@@ -37,14 +37,4 @@
 
 .DS_Store
 
-main
-2dbox
-3dbox
-checker_board
-primitives
-camera
-lighting
-material
-model_loading
-mesh
-model
+./dist/

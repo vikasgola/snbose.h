@@ -15,6 +15,7 @@ LIB_DIR=./lib
 INCLUDE_DIR=-I./include -I$(DEP_DIR)/include -I./deps/stb/include $(CPPINCLUDE)
 SRC_DIRS=./src
 BUILD_DIR=./dist
+EXAMPLE_DIR=./examples
 
 
 DEPS_OBJS := $(shell find $(DEP_DIR) -name '*.o')
@@ -23,7 +24,7 @@ SRCS := $(shell find $(SRC_DIRS) -name '*.cpp')
 OBJS := $(SRCS:%=$(BUILD_DIR)/%.o)
 
 EXAMPLES_SRC := $(shell find examples -name '*.cpp')
-EXAMPLES_OUT := $(EXAMPLES_SRC:%.cpp=%)
+EXAMPLES_OUT := $(EXAMPLES_SRC:%.cpp=$(BUILD_DIR)/%)
 
 all:
 	$(MAKE) deps
@@ -49,13 +50,14 @@ $(BUILD_DIR)/%.cpp.o: %.cpp
 	mkdir -p $(dir $@)
 	$(CXX) $(CPPFLAGS) -fPIC $(INCLUDE_DIR) -c $< -o $@
 
-$(EXAMPLES_OUT): $(EXAMPLES_SRC)
-	$(CXX) $(CPPFLAGS) $(INCLUDE_DIR) $(CPPLIBS) $@.cpp $(LIB_DIR)/libsnbose.a -o $@
+$(BUILD_DIR)/${EXAMPLE_DIR}/%: ${EXAMPLE_DIR}/%.cpp
+	mkdir -p $(dir $@)
+	$(CXX) $(CPPFLAGS) $(INCLUDE_DIR) $(CPPLIBS) $< $(LIB_DIR)/libsnbose.a -o $@
 
 
 .PHONY: clean
 clean:
-	rm -rf $(BUILD_DIR) $(EXAMPLES_OUT) $(LIB_DIR)
+	rm -rf $(BUILD_DIR) $(LIB_DIR)
 	make -C deps/advmath clean
 
 FORCE: ;
