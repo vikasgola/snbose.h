@@ -141,7 +141,7 @@ void ShaderProgram::bind(){
 void ShaderProgram::unbind(){
     glUseProgram(GL_NONE);
     // Clear all set shader variables to remove unexpected problems in future.
-    this->sp_vars.clear();
+    // this->sp_vars.clear();
 }
 
 int ShaderProgram::get_location(const std::string& name){

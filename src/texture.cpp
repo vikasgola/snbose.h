@@ -35,12 +35,24 @@ Texture& Texture::operator=(const Texture &texture){
 }
 
 void Texture::load(){
+    GLenum format;
+    if(this->channels == 1){
+        format = GL_RED;
+    }else if(this->channels == 3){
+        format = GL_RGB;
+    }else if(this->channels == 4){
+        format = GL_RGBA;
+    }else{
+        fprintf(stderr, "[ERROR]: Don't know how to load texture with channels = %d", this->channels);
+        return;
+    }
+
     glBindTexture(GL_TEXTURE_2D, this->id);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, this->width, this->height, 0, GL_RGB, GL_UNSIGNED_BYTE, this->data);
+    glTexImage2D(GL_TEXTURE_2D, 0, format, this->width, this->height, 0, format, GL_UNSIGNED_BYTE, this->data);
     glGenerateMipmap(GL_TEXTURE_2D);
     this->unbind();
 }

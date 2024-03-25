@@ -1,24 +1,27 @@
 #include<snbose/helper.h>
 #include<snbose/window.h>
+#include<snbose/texture.h>
 #include<snbose/camera.h>
-#include<snbose/renderer.h>
-#include<snbose/object.h>
 #include<snbose/shader.h>
-#include<snbose/material.h>
-#include<cmath>
+#include<snbose/object.h>
+#include<snbose/renderer.h>
 
+#include<iostream>
+#include<random>
 
-#define WINDOW_WIDTH 800
-#define WINDOW_HEIGHT 600
+#define SCREEN_WIDTH 800
+#define SCREEN_HEIGHT 600
 
 const std::string object_vertex_shader = R"OVS(
 #version 330 core
 
 layout(location = 0) in vec3 in_position;
 layout(location = 1) in vec3 in_normal;
+layout(location = 2) in vec2 in_tex_coord;
 
 out vec3 frag_pos;
 out vec3 normal;
+out vec2 tex_cords;
 
 uniform mat4 u_model = mat4(1.0);
 uniform mat4 u_view = mat4(1.0);
@@ -28,6 +31,7 @@ void main(){
     gl_Position = u_projection*u_view*u_model*vec4(in_position, 1.0);
     frag_pos = vec3(u_model*vec4(in_position, 1.0));
     normal = mat3(transpose(inverse(u_model)))*in_normal; // normal matrix
+    tex_cords = in_tex_coord;
 }
 )OVS";
 
@@ -38,12 +42,11 @@ out vec4 color;
 
 in vec3 normal;
 in vec3 frag_pos;
+in vec2 tex_cords;
 
 uniform vec3 u_camera_pos;
 
 struct Material {
-    vec3 ambient;
-    vec3 diffuse;
     vec3 specular;
     float shininess;
 };
@@ -57,18 +60,21 @@ struct Light {
 };
 uniform Light light;
 
+uniform sampler2D u_texture_diffuse1;
+uniform sampler2D u_texture_specular1;
+
 void main(){
-    vec3 ambient = light.ambient*material.ambient;
+    vec3 ambient = light.ambient*texture(u_texture_diffuse1, tex_cords).rgb;
 
     vec3 n_normal = normalize(normal);
 
     vec3 light_dir = normalize(light.position - frag_pos);
-    vec3 diffu = light.diffuse*(max(dot(light_dir, n_normal), 0.0)*material.diffuse);
+    vec3 diffu = light.diffuse*max(dot(light_dir, n_normal), 0.0)*texture(u_texture_diffuse1, tex_cords).rgb;
 
     vec3 refl_dir = reflect(-light_dir, n_normal);
     vec3 view_dir = normalize(u_camera_pos - frag_pos);
     float pre_speular = pow(max(dot(view_dir, refl_dir), 0.0), material.shininess);
-    vec3 specular = light.specular*(pre_speular*material.specular);
+    vec3 specular = light.specular*(pre_speular*texture(u_texture_specular1, tex_cords).rgb);
 
     color = vec4(ambient+diffu+specular, 1.0);
 }
@@ -90,73 +96,81 @@ void main(){
 
 void check_inputs(Window &window, Camera &camera);
 
-int main(){
-    Window window(WINDOW_WIDTH, WINDOW_HEIGHT, "Lighting");
+int main(void){
+    srand(time(0));
+    Window window(SCREEN_WIDTH, SCREEN_HEIGHT, "Material maps");
     window.set_hints();
     window.use();
+    window.set_vsync(1);
     init_glew();
 
-
     Renderer renderer;
-    renderer.camera.look_at(vec3(0.0f, 8.0f, -12.0f), vec3(0.0f, 0.0f, 1.0f), vec3(0.0f, 1.0f, 0.0f));
-    renderer.camera.set_pitch(renderer.camera.get_pitch()-20.0f);
+    renderer.camera.look_at(vec3(0.0f, 0.0f, -8.0f), vec3(0.0f, 0.0f, 1.0f), vec3(0.0f, 1.0f, 0.0f));
 
+    // creating shaders and textures
     auto obj_sp = ShaderProgram::fromSource(object_vertex_shader, object_fragment_shader);
     auto light_sp = ShaderProgram::fromSource(light_vertex_shader, light_fragment_shader);
+    Texture diffuse_texture("assets/container2_diffuse.png", "diffuse");
+    Texture specular_texture("assets/container2_specular.png", "specular");
 
-    const size_t vertex_size = 6;
-    const float cube_vertices[] = {
-        #include "../assets/box_normal.h"
+    const float vertices_float[] = {
+        #include "../assets/box_normal_texture.h"
     };
-    std::vector<Vertex> vertices;
-    for(size_t i=0;i<36;i++)
-        vertices.push_back({
-            .position = vec3(cube_vertices[i*vertex_size], cube_vertices[i*vertex_size+1], cube_vertices[i*vertex_size+2]),
-            .normal = vec3(cube_vertices[i*vertex_size+3], cube_vertices[i*vertex_size+3+1], cube_vertices[i*vertex_size+3+2])
-        });
+    std::vector<Vertex> vertices(36);
+    memcpy(&vertices[0], vertices_float, sizeof(vertices_float[0])*36*8);
 
-    Mesh box_mesh(vertices);
+    auto box_mesh = Mesh(vertices, {diffuse_texture, specular_texture});
+    // Object box_template(box_mesh);
 
-    Object floor(box_mesh);
-    floor.set_material(MATERIAL_GOLD);
-    floor.scale(8.0f, 1.0f, 8.0f);
+    const size_t CUBE_COUNT = 80;
+    std::vector<Object> boxes(CUBE_COUNT, box_mesh);
+    vec3 boxes_positions[CUBE_COUNT];
 
-    Object light(box_mesh);
-    light.move(0.0f, 2.0f, 0.0f);
+    for(int i=0;i<CUBE_COUNT;i++){
+        vec3 p = vec3(
+            6.0f*((double) rand()/RAND_MAX) - 3.0f,
+            6.0f*((double) rand()/RAND_MAX) - 3.0f,
+            6.0f*((double) rand()/RAND_MAX) - 3.0f
+        );
+        boxes_positions[i] = p;
+        boxes[i].move(p);
+        boxes[i].scale(vec3(0.6f));
+        renderer.add_object(boxes[i], obj_sp);
+    }
+    obj_sp.sv<float>("material.shininess", 64.0f);
 
-    std::vector<Object> boxes(2, box_mesh);
-    boxes[0].move(vec3(2.0f, 1.0f, 2.0f));
-    boxes[1].move(vec3(-2.0f, 1.0f, -2.0f));
-    boxes[0].set_material(MATERIAL_EMERALD);
-    boxes[1].set_material(MATERIAL_PEARL);
+    // Light
+    auto box_mesh_without_texture = Mesh(vertices);
+    Object light(box_mesh_without_texture);
+    light.scale(vec3(0.2f));
 
-    // shader properties
     obj_sp.sv<vec3>("light.ambient", vec3(0.2f));
     obj_sp.sv<vec3>("light.diffuse", vec3(0.5f));
     obj_sp.sv<vec3>("light.specular", vec3(1.0f));
+    obj_sp.sv<vec3>("light.position", light.get_position());
 
     renderer.add_object(light, light_sp);
-    renderer.add_object(floor, obj_sp);
-    renderer.add_object(boxes[0], obj_sp);
-    renderer.add_object(boxes[1], obj_sp);
 
-    vec3 pos = light.get_position();
+    // main event loop and draw whatever we want to draw
     while(!window.should_close()){
         check_inputs(window, renderer.camera);
-        renderer.clear_color(vec4(0.12f, 0.12f, 0.12f, 1.0f));
+        renderer.clear_color(vec4(0.15, 0.15, 0.15, 1.0));
         renderer.clear_depth();
 
-        light.move(pos+vec3(sinf(renderer.get_time()), 0.0f, cosf(renderer.get_time()))*5.0f);
-        // floor.rotate(renderer.get_time()*2.0f, vec3(1.0, 1.0f, 1.0f));
+        for(int i=0;i<CUBE_COUNT;i++){
+            float time = (float)glfwGetTime();
+            boxes[i].move(
+                boxes_positions[i] - vec3(0.0f, 0.0f, 2.0f*sinf(time))
+            );
+            boxes[i].rotate((time+(float)i)*10.0, vec3(1.0, 1.0, 1.0));
+        }
         obj_sp.sv<vec3>("u_camera_pos", renderer.camera.get_position());
-        obj_sp.sv<vec3>("light.position", light.get_position());
 
         renderer.draw();
         window.update();
     }
     return EXIT_SUCCESS;
 }
-
 
 void check_inputs(Window &window, Camera &camera){
     if (window.is_key_pressed(GLFW_KEY_ESCAPE)){
@@ -184,8 +198,8 @@ void check_inputs(Window &window, Camera &camera){
     }
     camera.set_position(position);
 
-    static float last_x = WINDOW_WIDTH/2;
-    static float last_y = WINDOW_HEIGHT/2;
+    static float last_x = SCREEN_WIDTH/2;
+    static float last_y = SCREEN_HEIGHT/2;
     auto mouse_pos = window.get_mouse_pos();
     float offset_x = last_x - mouse_pos.first;
     float offset_y = last_y - mouse_pos.second;

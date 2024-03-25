@@ -53,12 +53,14 @@ uniform Light light;
 void main(){
     float ambient = 0.1;
 
+    vec3 n_normal = normalize(normal);
+
     vec3 light_dir = normalize(light.position - frag_pos);
-    float diffu = max(dot(light_dir, normal), 0.0);
+    float diffu = max(dot(light_dir, n_normal), 0.0);
 
     float specular_strength = 0.5;
     int shininess = 32;
-    vec3 refl_dir = reflect(-light_dir, normal);
+    vec3 refl_dir = reflect(-light_dir, n_normal);
     vec3 view_dir = normalize(u_camera_pos - frag_pos);
     float pre_speular = pow(max(dot(view_dir, refl_dir), 0.0), shininess);
     float specular = specular_strength*pre_speular;
