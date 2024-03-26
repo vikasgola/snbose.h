@@ -53,7 +53,7 @@ struct Material {
 uniform Material material;
 
 struct Light {
-    vec3 position;
+    vec3 direction;
     vec3 ambient;
     vec3 diffuse;
     vec3 specular;
@@ -68,7 +68,7 @@ void main(){
 
     vec3 n_normal = normalize(normal);
 
-    vec3 light_dir = normalize(light.position - frag_pos);
+    vec3 light_dir = normalize(-light.direction);
     vec3 diffu = light.diffuse*max(dot(light_dir, n_normal), 0.0)*texture(u_texture_diffuse1, tex_cords).rgb;
 
     vec3 refl_dir = reflect(-light_dir, n_normal);
@@ -98,7 +98,7 @@ void check_inputs(Window &window, Camera &camera);
 
 int main(void){
     srand(time(0));
-    Window window(SCREEN_WIDTH, SCREEN_HEIGHT, "Lighting maps");
+    Window window(SCREEN_WIDTH, SCREEN_HEIGHT, "Directional Light");
     window.set_hints();
     window.use();
     window.set_vsync(1);
@@ -109,7 +109,7 @@ int main(void){
 
     // creating shaders and textures
     auto obj_sp = ShaderProgram::fromSource(object_vertex_shader, object_fragment_shader);
-    auto light_sp = ShaderProgram::fromSource(light_vertex_shader, light_fragment_shader);
+    // auto light_sp = ShaderProgram::fromSource(light_vertex_shader, light_fragment_shader);
     Texture diffuse_texture("assets/container2_diffuse.png", "diffuse");
     Texture specular_texture("assets/container2_specular.png", "specular");
 
@@ -140,16 +140,19 @@ int main(void){
     obj_sp.sv<float>("material.shininess", 64.0f);
 
     // Light
-    auto box_mesh_without_texture = Mesh(vertices);
-    Object light(box_mesh_without_texture);
-    light.scale(vec3(0.2f));
+    // auto box_mesh_without_texture = Mesh(vertices);
+    // Object light(box_mesh_without_texture);
+    // light.scale(vec3(0.2f));
+    // light.move(vec3(2.0f, 10.0f, -3.0f));
 
+    // Light only depends on direction coming in parallel
+    // is not attached to any object as such
     obj_sp.sv<vec3>("light.ambient", vec3(0.2f));
     obj_sp.sv<vec3>("light.diffuse", vec3(0.5f));
     obj_sp.sv<vec3>("light.specular", vec3(1.0f));
-    obj_sp.sv<vec3>("light.position", light.get_position());
+    obj_sp.sv<vec3>("light.direction", vec3(-0.2f, -1.0f, -0.3f));
 
-    renderer.add_object(light, light_sp);
+    // renderer.add_object(light, light_sp);
 
     // main event loop and draw whatever we want to draw
     while(!window.should_close()){
