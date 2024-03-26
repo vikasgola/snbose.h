@@ -11,6 +11,7 @@
 
 #define SCREEN_WIDTH 800
 #define SCREEN_HEIGHT 600
+#define CAMERA_SPEED 5
 
 const std::string object_vertex_shader = R"OVS(
 #version 330 core
@@ -184,7 +185,7 @@ void check_inputs(Window &window, Camera &camera){
 
     if(!window.is_mouse_captured()) return;
 
-    float dt = window.get_dt();
+    float dt = window.get_dt()*CAMERA_SPEED;
     vec3 position = camera.get_position();
 
     if(window.is_key_pressed(GLFW_KEY_W)){
