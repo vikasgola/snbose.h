@@ -60,7 +60,8 @@ struct Light {
     vec3 specular;
 
     vec3 direction;
-    float cut_off;
+    float inner_cut_off;
+    float outer_cut_off;
 };
 uniform Light light;
 
@@ -81,10 +82,12 @@ void main(){
     vec3 specular = light.specular*(pre_speular*texture(u_texture_specular1, tex_cords).rgb);
 
     float theta = dot(light_dir, normalize(-light.direction));
-    if(theta < light.cut_off){
-        diffu = vec3(0.0f);
-        specular = vec3(0.0f);
-    }
+    float epsilon = light.inner_cut_off - light.outer_cut_off;
+    float intensity = clamp((theta-light.outer_cut_off)/epsilon, 0.0f, 1.0f);
+
+    diffu *= intensity;
+    specular *= intensity;
+
     color = vec4(ambient+diffu+specular, 1.0);
 }
 )OFS";
@@ -138,7 +141,8 @@ int main(void){
     obj_sp.sv<vec3>("light.ambient", vec3(0.2f));
     obj_sp.sv<vec3>("light.diffuse", vec3(0.5f));
     obj_sp.sv<vec3>("light.specular", vec3(1.0f));
-    obj_sp.sv<float>("light.cut_off", cosf(DEG2RAD(10.0f)));
+    obj_sp.sv<float>("light.inner_cut_off", cosf(DEG2RAD(12.5f)));
+    obj_sp.sv<float>("light.outer_cut_off", cosf(DEG2RAD(17.5f)));
 
     // main event loop and draw whatever we want to draw
     while(!window.should_close()){
