@@ -1,6 +1,7 @@
 #include<snbose/object.h>
 
-Object::Object(){}
+Object::Object(){
+}
 
 Object::Object(Model &model){
     this->model = model;
@@ -11,6 +12,8 @@ Object::Object(Mesh &mesh){
 }
 
 void Object::draw(ShaderProgram &shader_program){
+    if(!this->model.can_draw()) return;
+
     shader_program.sv<mat4>("u_model", this->get_model_matrix());
     shader_program.sv<vec3>("u_color", this->get_color());
 
@@ -67,5 +70,6 @@ Object& Object::operator=(const Object &object){
     this->translate = object.translate;
     this->rotation_axis = object.rotation_axis;
     this->rotation_angle = object.rotation_angle;
+    this->material = object.material;
     return *this;
 }

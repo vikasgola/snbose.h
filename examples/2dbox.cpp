@@ -82,12 +82,10 @@ int main(void){
     Renderer renderer;
 
     auto wall_mesh = Mesh(vertices, indices, {texture});
-    auto wall_obj = Object(wall_mesh);
 
-    Object walls[WALL_COUNT];
+    vector<Object> walls(WALL_COUNT, wall_mesh);
     for(int i=0;i<WALL_COUNT;i++){
-        walls[i] = wall_obj;
-        renderer.add_object(wall_obj, shader_program);
+        renderer.add_object(walls[i], shader_program);
     }
 
     // main event loop and draw whatever we want to draw

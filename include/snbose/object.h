@@ -5,8 +5,9 @@
 #include<snbose/material.h>
 
 class Object{
-    private:
+    protected:
         Model model;
+    private:
         vec3 scale_factor = vec3(1.0f);
         vec3 translate = vec3(0.0f);
         vec3 rotation_axis = vec3(0.0f, 0.0f, 1.0f);

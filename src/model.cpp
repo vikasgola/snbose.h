@@ -11,6 +11,10 @@ void Model::draw(ShaderProgram &shader_program){
 
 Model::Model(){}
 
+Model::Model(Mesh mesh){
+    this->add_mesh(mesh);
+}
+
 Model::Model(std::vector<Mesh> meshes){
     this->meshes = meshes;
 }
