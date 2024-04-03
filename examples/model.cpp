@@ -18,7 +18,7 @@ void check_inputs(Window &window, Camera &camera);
 
 int main(void){
     srand(time(0));
-    Window window(SCREEN_WIDTH, SCREEN_HEIGHT, "Camera movements");
+    Window window(SCREEN_WIDTH, SCREEN_HEIGHT, "Models");
     window.set_hints();
     window.use();
     window.set_vsync(1);

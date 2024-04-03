@@ -17,7 +17,7 @@ void check_inputs(Window &window, Camera &camera);
 
 int main(void){
     srand(time(0));
-    Window window(SCREEN_WIDTH, SCREEN_HEIGHT, "Point Light");
+    Window window(SCREEN_WIDTH, SCREEN_HEIGHT, "Multiple Lights");
     window.set_hints();
     window.use();
     window.set_vsync(1);
@@ -90,9 +90,9 @@ int main(void){
 
         for(int i=0;i<CUBE_COUNT;i++){
             float time = (float)glfwGetTime();
-            // boxes[i].move(
-            //     boxes_positions[i] - vec3(0.0f, 0.0f, 2.0f*sinf(time))
-            // );
+            boxes[i].move(
+                boxes_positions[i] - vec3(0.0f, 0.0f, 2.0f*sinf(time))
+            );
             boxes[i].rotate((time+(float)i)*10.0, vec3(1.0, 1.0, 1.0));
         }
         obj_sp.sv<vec3>("u_camera_pos", renderer.camera.get_position());

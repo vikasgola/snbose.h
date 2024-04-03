@@ -91,7 +91,7 @@ void main(){
 void check_inputs(Window &window, Camera &camera);
 
 int main(){
-    Window window(WINDOW_WIDTH, WINDOW_HEIGHT, "Lighting");
+    Window window(WINDOW_WIDTH, WINDOW_HEIGHT, "Material");
     window.set_hints();
     window.use();
     init_glew();

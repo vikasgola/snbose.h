@@ -20,7 +20,7 @@ int main(int argc, char const *argv[]){
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
     // create a window
-    GLFWwindow *window = glfwCreateWindow(800, 600, "Checker Board", NULL, NULL);
+    GLFWwindow *window = glfwCreateWindow(800, 600, "Primitives", NULL, NULL);
     if(!window){
         cerr<<"ERROR: failed to create a window."<<endl;
         glfwTerminate();

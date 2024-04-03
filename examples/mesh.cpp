@@ -26,7 +26,7 @@ int main(void){
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
     // create a window
-    GLFWwindow *window = glfwCreateWindow(800, 600, "Hello World!", NULL, NULL);
+    GLFWwindow *window = glfwCreateWindow(800, 600, "Mesh", NULL, NULL);
     if(!window){
         std::cerr<<"ERROR: failed to create a window."<<std::endl;
         glfwTerminate();
