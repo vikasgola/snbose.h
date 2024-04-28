@@ -9,7 +9,6 @@ in vec2 tex_cords;
 uniform vec3 u_camera_pos;
 
 struct Material {
-    vec3 specular;
     float shininess;
 };
 uniform Material material;

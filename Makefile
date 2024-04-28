@@ -1,7 +1,7 @@
 CXX=clang++
 CPPFLAGS=-std=c++11 -ggdb
-CPPLIBS:=`pkg-config --libs glew glfw3 assimp`
-CPPINCLUDE=`pkg-config --cflags assimp`
+CPPLIBS:=`pkg-config --libs glew glfw3 assimp freetype2`
+CPPINCLUDE=`pkg-config --cflags assimp freetype2`
 
 UNAME_S := $(shell uname -s)
 ifeq ($(UNAME_S),Darwin)
